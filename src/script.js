@@ -25,11 +25,23 @@ const textureLoader = new THREE.TextureLoader()
 const matcapTexture = textureLoader.load('textures/matcaps/8.png')
 matcapTexture.colorSpace = THREE.SRGBColorSpace
 
+const material = new THREE.MeshStandardMaterial()
+material.roughness = 0.4
+
+// const plane = new THREE.Mesh(
+//     new THREE.SphereGeometry(30, 64, 32),
+//     material
+// )
+// // plane.rotation.x = - Math.PI * 0.5
+// plane.position.y = - 30
+// scene.add(plane)
+
 /**
  * Fonts
  */
 const fontLoader = new FontLoader()
 
+//Load "SEEK 2025" and //donuts
 fontLoader.load(
     '/fonts/helvetiker_regular.typeface.json',
     (font) => {
@@ -77,12 +89,12 @@ fontLoader.load(
     }
 )
 
+//Load USA Map
 const loader = new GLTFLoader();
-
 loader.load(USA_Map_URL, function (gltf) {
 
-    const light = new THREE.AmbientLight();
-    scene.add(light)
+    // const light = new THREE.AmbientLight();
+    // scene.add(light)
     scene.add(gltf.scene);
 
 }, undefined, function (error) {
@@ -90,6 +102,51 @@ loader.load(USA_Map_URL, function (gltf) {
     console.error(error);
 
 });
+
+//Lights
+// Directional light
+// const directionalLight = new THREE.DirectionalLight(0x00fffc, 0.9)
+// directionalLight.position.set(1, 0.25, 0)
+// scene.add(directionalLight)
+
+// Hemisphere light
+const hemisphereLight = new THREE.HemisphereLight(0xeeeeff, 0x000000, 4)
+scene.add(hemisphereLight)
+
+// Point light
+// const pointLight = new THREE.PointLight(0xff9000, 1.5, 0, 2)
+// pointLight.position.set(1, - 0.5, 1)
+// scene.add(pointLight)
+
+// React area light
+// const rectAreaLight = new THREE.RectAreaLight(0x4e00ff, 6, 1, 1)
+// rectAreaLight.position.set(- 1.5, 0, 1.5)
+// rectAreaLight.lookAt(new THREE.Vector3())
+// scene.add(rectAreaLight)
+
+// Spot light
+const spotLight = new THREE.SpotLight(0xffffff, 6, 45, Math.PI * 0.01, 1, 1)
+spotLight.position.set(-2.5, 12, 0)
+spotLight.target.position.x = -2.5
+spotLight.target.position.z = -0.8
+scene.add(spotLight)
+scene.add(spotLight.target)
+
+// Helpers
+// const hemisphereLightHelper = new THREE.HemisphereLightHelper(hemisphereLight, 0.2)
+// scene.add(hemisphereLightHelper)
+
+// const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 0.2)
+// scene.add(directionalLightHelper)
+
+// const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.2)
+// scene.add(pointLightHelper)
+
+// const spotLightHelper = new THREE.SpotLightHelper(spotLight)
+// scene.add(spotLightHelper)
+
+// const rectAreaLightHelper = new RectAreaLightHelper(rectAreaLight)
+// scene.add(rectAreaLightHelper)
 
 /**
  * Sizes
