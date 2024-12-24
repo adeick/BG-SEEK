@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "deploy": "npm install && vercel --prod"
+    "build": "npm install && vite build",
+    "deploy": "vercel --prod"
   },
   "devDependencies": {
     "vite": "^5.3.3",
