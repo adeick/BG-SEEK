@@ -1,19 +1,35 @@
-*
-{
+* {
     margin: 0;
     padding: 0;
 }
 
 html,
-body
-{
+body {
     overflow: hidden;
 }
 
-.webgl
-{
+.header {
+    overflow: hidden;
+    height: 60px;
+    background-color: #e6eef2;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+}
+
+.focus_logo {
+    height: 45px;
+}
+
+.focus_text {
+    padding: 0 15px;
+    font-size: x-large;
+    font-family: "Quicksand";
+}
+
+.webgl {
     position: fixed;
-    top: 0;
+    top: 60px;
     left: 0;
     outline: none;
 }

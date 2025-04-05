@@ -3,20 +3,21 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import USA_Map_URL from '../static/USA_Map.glb'
+import USA_Map_URL from '../static/BaseUSA.glb'
 import GUI from 'lil-gui'
 
 /**
  * Base
  */
 // Debug
-const gui = new GUI()
+// const gui = new GUI()
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
+scene.background = new THREE.Color().setHex("0xc8cecf");
 
 /**
  * Textures
@@ -49,27 +50,27 @@ fontLoader.load(
         const material = new THREE.MeshMatcapMaterial({ matcap: matcapTexture })
 
         // Text
-        const textGeometry = new TextGeometry(
-            'SEEK 2025',
-            {
-                font: font,
-                size: 0.5,
-                depth: 0.2,
-                curveSegments: 12,
-                bevelEnabled: true,
-                bevelThickness: 0.03,
-                bevelSize: 0.02,
-                bevelOffset: 0,
-                bevelSegments: 5
-            }
-        )
-        textGeometry.center()
-
-        const text = new THREE.Mesh(textGeometry, material)
-        text.position.z += -3;
-        text.position.y += 1;
-        text.rotateX(-Math.PI / 4)
-        scene.add(text)
+        // const textGeometry = new TextGeometry(
+        //     'SEEK 2025',
+        //     {
+        //         font: font,
+        //         size: 0.5,
+        //         depth: 0.2,
+        //         curveSegments: 12,
+        //         bevelEnabled: true,
+        //         bevelThickness: 0.03,
+        //         bevelSize: 0.02,
+        //         bevelOffset: 0,
+        //         bevelSegments: 5
+        //     }
+        // )
+        // textGeometry.center()
+        // 
+        // const text = new THREE.Mesh(textGeometry, material)
+        // text.position.z += -3;
+        // text.position.y += 1;
+        // text.rotateX(-Math.PI / 4)
+        // scene.add(text)
 
         // Donuts
         // const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 32, 64)
@@ -103,6 +104,10 @@ loader.load(USA_Map_URL, function (gltf) {
 
 });
 
+// scene.environmentIntensity = 2
+// scene.backgroundIntensity = 2
+// scene.backgroundBlurriness = 0.1
+
 //Lights
 // Directional light
 // const directionalLight = new THREE.DirectionalLight(0x00fffc, 0.9)
@@ -110,7 +115,7 @@ loader.load(USA_Map_URL, function (gltf) {
 // scene.add(directionalLight)
 
 // Hemisphere light
-const hemisphereLight = new THREE.HemisphereLight(0xeeeeff, 0x000000, 4)
+const hemisphereLight = new THREE.HemisphereLight(0xbfd8ff, 0x000000, 4)
 scene.add(hemisphereLight)
 
 // Point light
@@ -125,12 +130,12 @@ scene.add(hemisphereLight)
 // scene.add(rectAreaLight)
 
 // Spot light
-const spotLight = new THREE.SpotLight(0xffffff, 6, 45, Math.PI * 0.01, 1, 1)
-spotLight.position.set(-2.5, 12, 0)
-spotLight.target.position.x = -2.5
-spotLight.target.position.z = -0.8
-scene.add(spotLight)
-scene.add(spotLight.target)
+// const spotLight = new THREE.SpotLight(0xffffff, 6, 45, Math.PI * 0.01, 1, 1)
+// spotLight.position.set(-2.5, 12, 0)
+// spotLight.target.position.x = -2.5
+// spotLight.target.position.z = -0.8
+// scene.add(spotLight)
+// scene.add(spotLight.target)
 
 // Helpers
 // const hemisphereLightHelper = new THREE.HemisphereLightHelper(hemisphereLight, 0.2)
@@ -153,7 +158,7 @@ scene.add(spotLight.target)
  */
 const sizes = {
     width: window.innerWidth,
-    height: window.innerHeight
+    height: (window.innerHeight - 60)
 }
 
 window.addEventListener('resize', () => {
