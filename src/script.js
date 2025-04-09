@@ -71,22 +71,6 @@ fontLoader.load(
         // text.position.y += 1;
         // text.rotateX(-Math.PI / 4)
         // scene.add(text)
-
-        // Donuts
-        // const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 32, 64)
-
-        // for (let i = 0; i < 100; i++) {
-        //     const donut = new THREE.Mesh(donutGeometry, material)
-        //     donut.position.x = (Math.random() - 0.5) * 10
-        //     donut.position.y = (Math.random() - 0.5) * 10
-        //     donut.position.z = (Math.random() - 0.5) * 10
-        //     donut.rotation.x = Math.random() * Math.PI
-        //     donut.rotation.y = Math.random() * Math.PI
-        //     const scale = Math.random()
-        //     donut.scale.set(scale, scale, scale)
-
-        //     scene.add(donut)
-        // }
     }
 )
 
@@ -94,8 +78,6 @@ fontLoader.load(
 const loader = new GLTFLoader();
 loader.load(USA_Map_URL, function (gltf) {
 
-    // const light = new THREE.AmbientLight();
-    // scene.add(light)
     scene.add(gltf.scene);
 
 }, undefined, function (error) {
@@ -104,18 +86,91 @@ loader.load(USA_Map_URL, function (gltf) {
 
 });
 
-// scene.environmentIntensity = 2
-// scene.backgroundIntensity = 2
-// scene.backgroundBlurriness = 0.1
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2(-999, 999); //stop autoselecting kansas when starting
 
-//Lights
-// Directional light
-// const directionalLight = new THREE.DirectionalLight(0x00fffc, 0.9)
-// directionalLight.position.set(1, 0.25, 0)
-// scene.add(directionalLight)
+let hoveredState = null;
+let hoveredStateId = -1; // faster comparison (don't really know if faster but I assume it would be)
+
+const normalMaterial = new THREE.MeshStandardMaterial();
+const hoverMaterial = new THREE.MeshStandardMaterial();
+
+function onPointerMove(event) {
+
+    // calculate pointer position in normalized device coordinates
+    // (-1 to +1) for both components
+
+    pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+    pointer.y = - ((event.clientY - 60) / (window.innerHeight - 60)) * 2 + 1;
+
+    // console.log(event.clientY)
+}
+
+function raycastRender() {
+
+    // update the picking ray with the camera and pointer position
+    raycaster.setFromCamera(pointer, camera);
+
+    // calculate objects intersecting the picking ray
+    const intersects = raycaster.intersectObjects(scene.children);
+
+    let stateBeingHovered = false;
+    for (let i = 0; i < intersects.length; i++) {
+
+        if (hoveredState == null || hoveredStateId !== intersects[i].object.id) {
+            if (hoveredState != null) {
+                hoveredState.position.add(new THREE.Vector3(0, -0.1, 0));
+                hoveredState.material = normalMaterial
+            }
+            else {
+                //first state to be hovered
+                // console.log(intersects[i].object.name)
+                normalMaterial.copy(intersects[i].object.material);
+                hoverMaterial.copy(intersects[i].object.material);
+                hoverMaterial.color.set(0xcfe0fa)
+            }
+            // console.log(hoveredStateId + "  " + intersects[i].object.material.color.getHex()); //.material.color.set(0xff0000);
+            hoveredState = intersects[i].object;
+            // console.log(hoveredState.position)
+
+            hoveredState.position.add(new THREE.Vector3(0, 0.1, 0));
+            intersects[i].object.material = hoverMaterial
+
+            // hoveredState.material.color.set(0x000000)
+
+            // console.log(hoveredState.position)
+
+            hoveredStateId = intersects[i].object.id;
+            stateBeingHovered = true;
+            // console.log("New Hover on " + intersects[i].object.name); //.material.color.set(0xff0000);
+            return;
+        }
+        if (hoveredStateId == intersects[i].object.id) {
+            stateBeingHovered = true;
+            return;
+        }
+
+        // console.log(intersects[i].object.id); //.material.color.set(0xff0000);
+    }
+    if (!stateBeingHovered) {
+        if (hoveredState != null) {
+            hoveredState.position.add(new THREE.Vector3(0, -0.1, 0));
+            hoveredState.material = normalMaterial
+            hoveredState = null;
+        }
+        hoveredStateId = -1;
+        // console.log("No hover"); //.material.color.set(0xff0000);
+    }
+
+    renderer.render(scene, camera);
+
+}
+
+window.addEventListener('pointermove', onPointerMove);
 
 // Hemisphere light
-const hemisphereLight = new THREE.HemisphereLight(0xbfd8ff, 0x000000, 4)
+const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x000000, 4)
+// const hemisphereLight = new THREE.HemisphereLight(0xbfd8ff, 0x000000, 4)
 scene.add(hemisphereLight)
 
 // Point light
@@ -216,6 +271,7 @@ const tick = () => {
 
     // Render
     renderer.render(scene, camera)
+    raycastRender()
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
