@@ -21,7 +21,7 @@ export class PanZoomControls {
 
         // Zoom state
         this.zoomSpeed = 0.5;
-        this.minZoom = 2;
+        this.minZoom = 1;
         this.maxZoom = 50;
         this.zoomVelocity = 0;
         this.zoomDamping = 0.85;
@@ -145,6 +145,8 @@ export class PanZoomControls {
                 this.minZoom,
                 this.maxZoom
             );
+            this.camera.position.z += this.zoomVelocity * 0.2;
+
             this.zoomVelocity *= this.zoomDamping;
         } else {
             this.zoomVelocity = 0;

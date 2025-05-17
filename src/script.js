@@ -74,21 +74,15 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 // Base camera
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 2000)
 
-camera.position.set(0, 10, 0);
-camera.lookAt(0, 0, 0);
+camera.position.set(0, 10, 3);
+// camera.lookAt(0, 0, 0);
+camera.rotation.x = THREE.MathUtils.degToRad(-70); // Tilt by 10 degrees
+
 
 scene.add(camera)
 
 // Controls
 const controls = new PanZoomControls(camera, canvas)
-controls.enableDamping = true
-controls.autoRotate = false
-controls.zoomToCursor = true;
-// controls.enableRotate = false
-// controls.maxPolarAngle = Math.PI / 4
-// controls.minPolarAngle = Math.PI / 4
-// controls.minAzimuthAngle = 0
-// controls.maxAzimuthAngle = 0
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2(-999, 999); //stop autoselecting kansas when starting
@@ -118,34 +112,35 @@ function onPointerDown(event) {
     let gotoCameraPosition = new THREE.Vector3();
     let validState = false;
 
+    validState = true;
+    flyToState(relevantState)
+
     switch (relevantStateId) {
         case 31:
             //Ohio
             console.log("Ohio clicked " + camera)
-            validState = true;
-            gotoCameraPosition.set(2.414840103769524, 0.7005265324972118, -0.36776443756869115);
-        // camera.rotation.set(-Math.PI / 2, 0, 0);
-        // camera.lookAt(hoveredState.position)
+
+
     }
 
     if (!validState) return;
 
-    gsap.to(camera.position, {
-        duration: 1,
-        x: gotoCameraPosition.x,
-        y: gotoCameraPosition.y,
-        z: gotoCameraPosition.z,
-        onUpdate: function () {
+    // gsap.to(camera.position, {
+    //     duration: 1,
+    //     x: gotoCameraPosition.x,
+    //     y: gotoCameraPosition.y,
+    //     z: gotoCameraPosition.z,
+    //     onUpdate: function () {
 
-            controls.update();
+    //         controls.update();
 
-        },
-        onComplete: function () {
+    //     },
+    //     onComplete: function () {
 
-            // controls.enabled = true;
-            // controls.target = unitedStatesTarget
-        }
-    });
+    //         // controls.enabled = true;
+    //         // controls.target = unitedStatesTarget
+    //     }
+    // });
 }
 
 function calculateStateHover(intersects) {
@@ -193,6 +188,39 @@ function calculateStateHover(intersects) {
     return;
 
 }
+
+function flyToState(stateMesh) {
+    const targetPos = stateMesh.position.clone();
+    const zoomHeight = getZoomHeight();
+
+    // Animate camera to hover above the state's position
+    gsap.to(camera.position, {
+        x: targetPos.x,
+        y: zoomHeight,
+        z: targetPos.z + zoomHeight * 0.3,
+        duration: 1.5,
+        ease: "power2.inOut"
+    });
+}
+
+
+function getZoomHeight() {
+    const minZoom = 2;
+    const maxZoom = 5;
+    const minWidth = 400;
+    const maxWidth = 1400;
+
+    // Clamp width within the range
+    const width = Math.min(Math.max(sizes.width, minWidth), maxWidth);
+
+    // Normalize screen width (0 = wide desktop, 1 = small mobile)
+    const t = (maxWidth - width) / (maxWidth - minWidth);
+
+    // Interpolate between minZoom and maxZoom
+    return minZoom + t * (maxZoom - minZoom);
+}
+
+
 
 
 function raycastRender() {
