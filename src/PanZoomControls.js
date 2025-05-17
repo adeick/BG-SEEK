@@ -121,7 +121,7 @@ export class PanZoomControls {
             const newDist = this._touchDistance(event);
             const zoomDelta = (this._startDist - newDist) * 0.1;
 
-            this.zoomVelocity += zoomDelta * this.zoomSpeed * 0.1;
+            this.zoomVelocity += zoomDelta * this.zoomSpeed * 0.03;
         }
     }
 
