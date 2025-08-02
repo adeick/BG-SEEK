@@ -212,7 +212,7 @@ function flyToState(stateMesh) {
     const horizontalFOV = 2 * Math.atan(Math.tan(fov / 2) * aspect);
 
     // Calculate distance needed to fit the box height and width in view
-    const distanceForHeight = boxSize.y / (2 * Math.tan(fov / 2));
+    const distanceForHeight = boxSize.z / (2 * Math.tan(fov / 2));
     const distanceForWidth = boxSize.x / (2 * Math.tan(horizontalFOV / 2));
 
     // Choose the larger distance to fit entire box
