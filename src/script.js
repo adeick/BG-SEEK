@@ -1,206 +1,250 @@
 /**
- * Import Statements
+ * US Map Interaction using THREE.js
+ * Features: 
+ * - Top-down 3D map loaded from GLB
+ * - Hover highlighting on desktop
+ * - Tap/click selection with zoom-in animation
+ * - Tap again to deselect and zoom out
+ * - Pan and zoom via MapControls
  */
-import * as THREE from 'three'
-import { PanZoomControls } from './PanZoomControls';
+
+import * as THREE from 'three';
+import { MapControls } from 'three/examples/jsm/controls/MapControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import USA_Map_URL from '../static/BaseUSA.glb'
-import gsap from 'gsap'
+import USA_Map_URL from '../static/BaseUSA.glb';
+import gsap from 'gsap';
 
-// Canvas
-const canvas = document.querySelector('canvas.webgl')
+// Detect mobile platform
+const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
-// Scene
-const scene = new THREE.Scene()
-scene.background = new THREE.Color().setHex("0xc8cecf");
+// Canvas and scene setup
+const canvas = document.querySelector('canvas.webgl');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xc8cecf);
 
-/**
- * Load USA Map 
- */
+// Lighting
+const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x000000, 4);
+scene.add(hemisphereLight);
+
+// Materials
+const normalMaterials = new Map();
+const hoverColor = 0xcfe0fa;
+const selectedColor = 0x99bbee;
+
+// Track current interaction state
+let hoveredState = null;
+let selectedState = null;
+
+// List of selectable meshes
+const selectableStates = [];
+
+// Load the GLB map and extract state meshes
 const loader = new GLTFLoader();
-loader.load(USA_Map_URL, function (gltf) {
+loader.load(USA_Map_URL, (gltf) => {
+    const map = gltf.scene;
+    map.traverse((child) => {
+        if (child.isMesh) {
+            selectableStates.push(child);
+        }
+    });
+    scene.add(map);
+}, undefined, (error) => console.error(error));
 
-    scene.add(gltf.scene);
-
-}, undefined, function (error) {
-
-    console.error(error);
-});
-
-const material = new THREE.MeshStandardMaterial()
-material.roughness = 0.4
-const normalMaterial = new THREE.MeshStandardMaterial();
-const hoverMaterial = new THREE.MeshStandardMaterial();
-
-
-// Hemisphere light
-const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x000000, 4)
-scene.add(hemisphereLight)
-
-/**
- * Sizes
- */
+// Camera setup
 const sizes = {
     width: window.innerWidth,
-    height: (window.innerHeight - 60)
-}
-
-window.addEventListener('resize', () => {
-    // Update sizes
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
-
-    // Update camera
-    camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
-
-    // Update renderer
-    renderer.setSize(sizes.width, sizes.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-})
-
-/**
- * Renderer
- */
-const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
-})
-renderer.setSize(sizes.width, sizes.height)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-
-/**
- * Camera
- */
-// Base camera
-const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 2000)
-
+    height: window.innerHeight
+};
+const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 2000);
 camera.position.set(0, 10, 3);
-// camera.lookAt(0, 0, 0);
-camera.rotation.x = THREE.MathUtils.degToRad(-70); // Tilt by 10 degrees
-
-
-scene.add(camera)
+camera.rotation.x = THREE.MathUtils.degToRad(-70);
+scene.add(camera);
+const defaultCameraPos = new THREE.Vector3(0, 10, 3);
+const defaultTarget = new THREE.Vector3(0, 0, 0);
 
 // Controls
-const controls = new PanZoomControls(camera, canvas)
+const controls = new MapControls(camera, canvas);
+controls.enableRotate = false;
+controls.enablePan = true;
+controls.enableZoom = true;
+controls.screenSpacePanning = true;
+controls.dampingFactor = 0.1;
+controls.enableDamping = true;
+controls.minDistance = 0;
+controls.maxDistance = 20;
+controls.maxPolarAngle = Math.PI / 2;
 
+// Raycasting setup
 const raycaster = new THREE.Raycaster();
-const pointer = new THREE.Vector2(-999, 999); //stop autoselecting kansas when starting
+const pointer = new THREE.Vector2(-999, 999);
+let pointerDownPos = new THREE.Vector2();
+const MAX_CLICK_DELTA = 5; // Max movement allowed to count as a click
 
-let selectionSituation = 0; // 0 is null, 1 is hovering, 2 is selected
-let relevantState = null;
-let relevantStateId = null;
+// Renderer setup
+const renderer = new THREE.WebGLRenderer({ canvas });
+renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-function onPointerMove(event) {
+// Responsive resizing
+window.addEventListener('resize', () => {
+    sizes.width = window.innerWidth;
+    sizes.height = window.innerHeight;
+    camera.aspect = sizes.width / sizes.height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(sizes.width, sizes.height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
 
-    // calculate pointer position in normalized device coordinates
-    // (-1 to +1) for both components
-
-    pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-    pointer.y = - ((event.clientY - 60) / (window.innerHeight - 60)) * 2 + 1;
-
-    // console.log(event.clientY)
+// Pointer utilities
+function updatePointerFromEvent(event) {
+    const rect = canvas.getBoundingClientRect();
+    pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 }
 
-function onPointerDown(event) {
-    if (selectionSituation == 0) {
-        return; // Cannot select unhovered State (? maybe unnecessary on phone)
-    }
-
-    //Code below should only really execute in selectionSituation == 1 (so maybe add blocking code for selectionSituation == 2)
-
-    let gotoCameraPosition = new THREE.Vector3();
-    let validState = false;
-
-    validState = true;
-    flyToState(relevantState)
-
-    switch (relevantStateId) {
-        case 31:
-            //Ohio
-            console.log("Ohio clicked " + camera)
-
-
-    }
-
-    if (!validState) return;
-
-    // gsap.to(camera.position, {
-    //     duration: 1,
-    //     x: gotoCameraPosition.x,
-    //     y: gotoCameraPosition.y,
-    //     z: gotoCameraPosition.z,
-    //     onUpdate: function () {
-
-    //         controls.update();
-
-    //     },
-    //     onComplete: function () {
-
-    //         // controls.enabled = true;
-    //         // controls.target = unitedStatesTarget
-    //     }
-    // });
-}
-
+// Hover behavior
 function calculateStateHover(intersects) {
-    if (selectionSituation == 2)
-        return; //If a state is already selected, we aren't hovering
+    if (isMobile || selectedState) return;
 
-
-    for (let i = 0; i < intersects.length; i++) {
-        if (intersects[i].object.id == relevantStateId) {
-            //Same State selected
-            return;
+    if (intersects.length > 0) {
+        const state = intersects[0].object;
+        if (hoveredState && hoveredState !== state) {
+            resetStateAppearance(hoveredState);
         }
-
-        if (selectionSituation == 0) {
-            //Definitely a more efficient way to do this
-            normalMaterial.copy(intersects[i].object.material);
-            hoverMaterial.copy(intersects[i].object.material);
-            hoverMaterial.color.set(0xcfe0fa)
+        if (!normalMaterials.has(state.id)) {
+            normalMaterials.set(state.id, state.material.clone());
         }
-        if (selectionSituation == 1) {
-            //Unselect previous relevantState
-            relevantState.position.add(new THREE.Vector3(0, -0.1, 0));
-            relevantState.material = normalMaterial
+        hoveredState = state;
+        hoveredState.material = hoveredState.material.clone();
+        hoveredState.material.color.set(hoverColor);
+        hoveredState.position.y = 0.2;
+    } else {
+        if (hoveredState) {
+            resetStateAppearance(hoveredState);
+            hoveredState = null;
         }
+    }
+}
 
-        relevantState = intersects[i].object;
-        relevantState.position.add(new THREE.Vector3(0, 0.1, 0));
-        relevantState.material = hoverMaterial
-        relevantStateId = intersects[i].object.id;
-        // isAStateBeingHovered = true;
-        selectionSituation = 1;
+function resetStateAppearance(state) {
+    const originalMat = normalMaterials.get(state.id);
+    if (originalMat) {
+        state.material = originalMat.clone();
+    }
+    state.position.y = 0;
+}
+
+function deselectState() {
+    if (selectedState) {
+        resetStateAppearance(selectedState);
+        selectedState = null;
+    }
+}
+
+// Tap/click to select state or zoom out
+function handleTapOnState(event) {
+    updatePointerFromEvent(event);
+    raycaster.setFromCamera(pointer, camera);
+    const intersects = raycaster.intersectObjects(selectableStates, true);
+
+    const clickedState = intersects.find(obj => obj.object.isMesh)?.object || null;
+
+    if (!clickedState) {
+        deselectState();
         return;
     }
 
-    if (selectionSituation == 1) {
-        //Unselect previous relevantState
-        relevantState.position.add(new THREE.Vector3(0, -0.1, 0));
-        relevantState.material = normalMaterial
-        relevantState = null;
+    if (selectedState && clickedState === selectedState) {
+        deselectState();
+        flyToDefaultView();
+        return;
     }
 
-    selectionSituation = 0;
-    relevantStateId = -1
+    if (selectedState) {
+        resetStateAppearance(selectedState);
+    }
 
-    return;
+    selectedState = clickedState;
 
+    if (!normalMaterials.has(selectedState.id)) {
+        normalMaterials.set(selectedState.id, selectedState.material.clone());
+    }
+
+    selectedState.material = selectedState.material.clone();
+    selectedState.material.color.set(selectedColor);
+    selectedState.position.y = 0.2;
+
+    flyToState(selectedState);
+}
+
+function flyToDefaultView() {
+    gsap.to(camera.position, {
+        duration: 1.2,
+        x: defaultCameraPos.x,
+        y: defaultCameraPos.y,
+        z: defaultCameraPos.z,
+        ease: 'power2.inOut',
+        onUpdate: () => controls.update()
+    });
+
+    gsap.to(controls.target, {
+        duration: 1.2,
+        x: defaultTarget.x,
+        y: defaultTarget.y,
+        z: defaultTarget.z,
+        ease: 'power2.inOut'
+    });
 }
 
 function flyToState(stateMesh) {
-    const targetPos = stateMesh.position.clone();
-    const zoomHeight = getZoomHeight();
+    // Get bounding box of the state mesh
+    const box = new THREE.Box3().setFromObject(stateMesh);
+    const boxCenter = new THREE.Vector3();
+    box.getCenter(boxCenter);
+    const boxSize = new THREE.Vector3();
+    box.getSize(boxSize);
 
-    // Animate camera to hover above the state's position
-    gsap.to(camera.position, {
-        x: targetPos.x,
-        y: zoomHeight,
-        z: targetPos.z + zoomHeight * 0.3,
-        duration: 1.5,
-        ease: "power2.inOut"
-    });
+    // Camera parameters
+    const fov = THREE.MathUtils.degToRad(camera.fov); // vertical FOV in radians
+    const aspect = sizes.width / sizes.height;
+
+    // Calculate horizontal FOV
+    const horizontalFOV = 2 * Math.atan(Math.tan(fov / 2) * aspect);
+
+    // Calculate distance needed to fit the box height and width in view
+    const distanceForHeight = boxSize.y / (2 * Math.tan(fov / 2));
+    const distanceForWidth = boxSize.x / (2 * Math.tan(horizontalFOV / 2));
+
+    // Choose the larger distance to fit entire box
+    const requiredDistance = Math.max(distanceForHeight, distanceForWidth);
+
+    // Add some padding to zoom out a little extra
+    const paddingFactor = 1.3;
+    const zoomHeight = requiredDistance * paddingFactor;
+
+    // Position the camera above the box center with some offset
+    const offset = new THREE.Vector3(0, zoomHeight, zoomHeight * 0.3);
+    const newPos = boxCenter.clone().add(offset);
+
+    // Animate camera position and controls target together
+    const timeline = gsap.timeline();
+
+    timeline.to(camera.position, {
+        duration: 1.2,
+        x: newPos.x,
+        y: newPos.y,
+        z: newPos.z,
+        ease: 'power2.inOut',
+        onUpdate: () => controls.update()
+    }, 0);
+
+    timeline.to(controls.target, {
+        duration: 1.2,
+        x: boxCenter.x,
+        y: boxCenter.y,
+        z: boxCenter.z,
+        ease: 'power2.inOut'
+    }, 0);
 }
 
 
@@ -209,116 +253,46 @@ function getZoomHeight() {
     const maxZoom = 5;
     const minWidth = 400;
     const maxWidth = 1400;
-
-    // Clamp width within the range
     const width = Math.min(Math.max(sizes.width, minWidth), maxWidth);
-
-    // Normalize screen width (0 = wide desktop, 1 = small mobile)
     const t = (maxWidth - width) / (maxWidth - minWidth);
-
-    // Interpolate between minZoom and maxZoom
     return minZoom + t * (maxZoom - minZoom);
 }
 
-
-
+// Animation loop
+const clock = new THREE.Clock();
+function tick() {
+    controls.update();
+    renderer.render(scene, camera);
+    raycastRender();
+    requestAnimationFrame(tick);
+}
 
 function raycastRender() {
-    // update the picking ray with the camera and pointer position
     raycaster.setFromCamera(pointer, camera);
-
-    // calculate objects intersecting the picking ray
-    const intersects = raycaster.intersectObjects(scene.children);
-
+    const intersects = raycaster.intersectObjects(selectableStates, true);
     calculateStateHover(intersects);
-    renderer.render(scene, camera);
 }
 
+tick();
 
-
-window.addEventListener('pointermove', onPointerMove);
-window.addEventListener('pointerdown', onPointerDown);
-
-
-/**
- * Animate
- */
-const clock = new THREE.Clock()
-
-const tick = () => {
-    const elapsedTime = clock.getElapsedTime()
-
-    // if (selectionSituation < 2) {
-    // Update controls
-    // console.log("updateControls")
-    controls.update()
-    // }
-    // Render
-    renderer.render(scene, camera)
-    raycastRender()
-    // Call tick again on the next frame
-    window.requestAnimationFrame(tick)
-}
-
-tick()
-
-
-// Old Algorithms
-
-function onPointerDownX(event) {
-    // calculate pointer position in normalized device coordinates
-    // (-1 to +1) for both components
-
-
-    // if (selectionSituation == 0) {
-    //     return; // Cannot select unhovered State (? maybe unnecessary on phone)
-    // }
-    if (selectionSituation == 2) {
-        selectionSituation = 0;
-        console.log(" pos " + camera.position.x + " " + camera.position.y + " " + camera.position.z)
-
-        return; // Toggle
+// Event listeners
+canvas.addEventListener('pointermove', onPointerMove);
+canvas.addEventListener('pointerdown', (event) => {
+    pointerDownPos.set(event.clientX, event.clientY);
+});
+canvas.addEventListener('pointerup', (event) => {
+    const dx = event.clientX - pointerDownPos.x;
+    const dy = event.clientY - pointerDownPos.y;
+    if (dx * dx + dy * dy < MAX_CLICK_DELTA * MAX_CLICK_DELTA) {
+        handleTapOnState(event);
     }
+});
 
-    //Unselect previous relevantState
-    relevantState.position.add(new THREE.Vector3(0, -0.1, 0));
-    relevantState.material = normalMaterial
-    selectionSituation = 2;
-
-
-    // controls.enabled = false;
-    // camera.rotation.set(-Math.PI / 2, 0, 0);
-    // let gotoCameraPosition = new THREE.Vector3();
-    // let validState = false;
-
-    // switch (relevantStateId) {
-    //     case 31:
-    //         //Ohio
-    //         validState = true;
-    //         gotoCameraPosition.set(2.414840103769524, 0.7005265324972118, -0.36776443756869115);
-    //     // camera.rotation.set(-Math.PI / 2, 0, 0);
-    //     // camera.lookAt(hoveredState.position)
-    // }
-
-    // if (!validState) return;
-
-    // controls.enabled = false;
-    // controls.target = relevantState.position
-    // gsap.to(camera.position, {
-    //     duration: 1,
-    //     x: gotoCameraPosition.x,
-    //     y: gotoCameraPosition.y,
-    //     z: gotoCameraPosition.z,
-    //     onUpdate: function () {
-
-    //         controls.update();
-
-    //     },
-    //     onComplete: function () {
-
-    //         controls.enabled = true;
-
-    //     }
-    // });
-
+function onPointerMove(event) {
+    if (!isMobile) {
+        updatePointerFromEvent(event);
+        raycaster.setFromCamera(pointer, camera);
+        const intersects = raycaster.intersectObjects(selectableStates, true);
+        calculateStateHover(intersects);
+    }
 }
