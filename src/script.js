@@ -17,6 +17,24 @@ import gsap from 'gsap';
 // Detect mobile platform
 const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
+let universityData = [];
+
+fetch('/schools.csv')
+    .then(response => response.text())
+    .then(csvText => {
+        const result = Papa.parse(csvText, {
+            header: true,
+            skipEmptyLines: true
+        });
+
+        universityData = result.data;
+
+    })
+    .catch(err => {
+        console.error("Error loading university data:", err);
+    });
+
+
 // Canvas and scene setup
 const canvas = document.querySelector('canvas.webgl');
 const scene = new THREE.Scene();
@@ -68,12 +86,17 @@ const sizes = {
     width: window.innerWidth,
     height: window.innerHeight
 };
-const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 2000);
-camera.position.set(0, 10, 3);
-camera.rotation.x = THREE.MathUtils.degToRad(-70);
-scene.add(camera);
 const defaultCameraPos = new THREE.Vector3(0, 10, 3);
 const defaultTarget = new THREE.Vector3(0, 0, 0);
+
+
+const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 2000);
+// camera.position.set(defaultCameraPos);
+camera.position.set(0, 10, 3);
+
+// camera.rotation.x = THREE.MathUtils.degToRad(-70);
+camera.lookAt(defaultTarget)
+scene.add(camera);
 
 // Controls
 const controls = new MapControls(camera, canvas);
@@ -152,6 +175,12 @@ function deselectState() {
         resetStateAppearance(selectedState);
         selectedState = null;
         document.getElementById('state-label').style.display = 'none';
+
+        const uniList = document.getElementById('university-list');
+        if (uniList) {
+            uniList.classList.remove('visible');
+            // uniList.innerHTML = ''; // optional: clear content
+        }
     }
 }
 
@@ -190,7 +219,14 @@ function handleTapOnState(event) {
     selectedState.position.y = 0.2;
 
     flyToState(selectedState);
+
+    const readableName = selectedState.name.replace(/_/g, ' ');
+    const infoArray = universityData
+        .filter(row => row.State.trim().toLowerCase() === readableName.toLowerCase())
+        .map(row => row.University);
+    showUniversityList(readableName, infoArray);
 }
+
 function setLabelTextForState(stateMesh) {
     if (!stateMesh || !label) return;
 
@@ -286,7 +322,10 @@ function flyToDefaultView() {
         y: defaultCameraPos.y,
         z: defaultCameraPos.z,
         ease: 'power2.inOut',
-        onUpdate: () => controls.update()
+        onUpdate: () => {
+            controls.update()
+            camera.lookAt(controls.target);
+        }
     });
 
     gsap.to(controls.target, {
@@ -324,10 +363,19 @@ function flyToState(stateMesh) {
     const paddingFactor = 1.3;
     const zoomHeight = requiredDistance * paddingFactor;
 
-    // Position the camera above the box center with some offset
+    // Position the camera offset from the state center
     const offset = new THREE.Vector3(0, zoomHeight, zoomHeight * 0.3);
-    const newPos = boxCenter.clone().add(offset);
 
+    // --- Determine screen-based framing offset ---
+    const isMobile = window.innerWidth / window.innerHeight < 1;
+    const offsetAmount = isMobile ? 0.2 * zoomHeight : zoomHeight * 0.4;
+    const screenOffset = isMobile
+        ? new THREE.Vector3(0, 0, offsetAmount) // use z value not y (up on screen)
+        : new THREE.Vector3(offsetAmount, 0, 0); // left on screen
+
+    // Apply offset to both camera position and controls target
+    const newTarget = boxCenter.clone().add(screenOffset);
+    const newPos = boxCenter.clone().add(screenOffset).add(offset);
     // Animate camera position and controls target together
     const timeline = gsap.timeline();
     setLabelTextForState(stateMesh)
@@ -338,14 +386,17 @@ function flyToState(stateMesh) {
         y: newPos.y,
         z: newPos.z,
         ease: 'power2.inOut',
-        onUpdate: () => controls.update()
+        onUpdate: () => {
+            controls.update()
+            camera.lookAt(controls.target);
+        }
     }, 0);
 
     timeline.to(controls.target, {
         duration: 1.2,
-        x: boxCenter.x,
-        y: boxCenter.y,
-        z: boxCenter.z,
+        x: newTarget.x,
+        y: newTarget.y,
+        z: newTarget.z,
         ease: 'power2.inOut'
     }, 0);
 
@@ -410,9 +461,29 @@ function onPointerMove(event) {
     }
 }
 
-document.getElementById('close-label').addEventListener('click', () => {
-    deselectState();
-    flyToDefaultView();
-    document.getElementById('state-label').style.display = 'none';
-});
+function showUniversityList(stateName, infoArray) {
+    const panel = document.getElementById('university-list');
+    const nameEl = document.getElementById('panel-state-name');
+    const listEl = document.getElementById('state-info-list');
+
+    nameEl.textContent = stateName.replace(/_/g, ' ');
+    listEl.innerHTML = ''; // Clear existing list
+    infoArray.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        listEl.appendChild(li);
+    });
+
+    panel.classList.add('visible');
+}
+
+function hideUniversityList() {
+    const panel = document.getElementById('university-list');
+    panel.classList.remove('visible');
+}
+
+// Event listener for close button
+document.querySelector('.close-info-button').addEventListener('click', hideUniversityList);
+
+
 
