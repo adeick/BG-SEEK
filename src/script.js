@@ -20,16 +20,25 @@ const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 // Canvas and scene setup
 const canvas = document.querySelector('canvas.webgl');
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xc8cecf);
+// scene.background = new THREE.Color(0xc8cecf);
+scene.background = new THREE.Color(0xB5D9F9);
 
 // Lighting
-const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x000000, 4);
+const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x000000, 25);
 scene.add(hemisphereLight);
 
 // Materials
 const normalMaterials = new Map();
-const hoverColor = 0xcfe0fa;
-const selectedColor = 0x99bbee;
+const baseColor = 0x1A4D77;
+const hoverColor = 0x335b83;
+const selectedColor = 0x335b83;
+
+//Label HTML
+const label = document.getElementById('state-label');
+const labelText = label.querySelector('.label-text');
+const closeBtn = label.querySelector('.label-close');
+let labelFadingOut = false;
+
 
 // Track current interaction state
 let hoveredState = null;
@@ -45,6 +54,10 @@ loader.load(USA_Map_URL, (gltf) => {
     map.traverse((child) => {
         if (child.isMesh) {
             selectableStates.push(child);
+        }
+        if (child.isMesh && child.material?.color) {
+            child.material.color.set(baseColor);
+            child.userData.originalColor = child.material.color.clone();
         }
     });
     scene.add(map);
@@ -138,6 +151,7 @@ function deselectState() {
     if (selectedState) {
         resetStateAppearance(selectedState);
         selectedState = null;
+        document.getElementById('state-label').style.display = 'none';
     }
 }
 
@@ -161,6 +175,7 @@ function handleTapOnState(event) {
     }
 
     if (selectedState) {
+        labelFadingOut = true;
         resetStateAppearance(selectedState);
     }
 
@@ -176,6 +191,93 @@ function handleTapOnState(event) {
 
     flyToState(selectedState);
 }
+function setLabelTextForState(stateMesh) {
+    if (!stateMesh || !label) return;
+
+    if (!labelFadingOut) {
+        let stateName = stateMesh.name || stateMesh.userData.name || 'Unknown State';
+        stateName = stateName.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        labelText.textContent = stateName;
+    }
+
+    // Make it visible and transparent initially
+    label.style.display = 'block';
+    label.style.opacity = '0';
+
+}
+
+function showLabelForState(stateMesh) {
+    if (!stateMesh || !label) return;
+
+    // Set label text
+    labelFadingOut = false;
+    setLabelTextForState(stateMesh)
+
+    // Update position immediately before fade-in
+    updateLabelPosition(stateMesh);
+
+    // Fade in
+    gsap.to(label.style, {
+        duration: 0.5,
+        opacity: 1,
+        ease: 'power2.out'
+    });
+
+    // Attach close handler
+    closeBtn.onclick = () => {
+        hideLabel();
+        flyToDefaultView();
+        deselectState();
+    };
+}
+
+function updateLabelPosition(stateMesh) {
+    if (!stateMesh || !label) return;
+
+    // Get the center of the mesh in world space
+    const box = new THREE.Box3().setFromObject(stateMesh);
+    // const center = new THREE.Vector3();
+    // box.getCenter(center);
+
+
+    // Use the horizontal center (x and z) but max for y to put label above the state
+    const labelPos = new THREE.Vector3(
+        (box.min.x + box.max.x) / 2,
+        0.2 + (box.max.z - box.min.z) / 8,
+        box.min.z
+    );
+
+    // Project the position to screen space
+    const projected = labelPos.clone();
+    projected.project(camera);
+
+
+    // const x = (projected.x + 1) / 2 * sizes.width;
+    // const y = (-projected.z + 1) / 2 * sizes.height;
+    const x = (projected.x * 0.5 + 0.5) * sizes.width;
+    const y = (-projected.y * 0.5 + 0.5) * sizes.height;
+
+
+    label.style.left = `${x - label.offsetWidth / 2}px`;
+    label.style.top = `${y}px`;
+
+    // Optional: Offset slightly upward in screen space
+    // const offsetY = -30; // pixels upward
+    // label.style.transform = `translate(-50%, -100%) translate(${x}px, ${y + offsetY}px)`;
+}
+
+function hideLabel() {
+    labelFadingOut = true;
+    gsap.to(label.style, {
+        duration: 0.4,
+        opacity: 0,
+        ease: 'power2.in',
+        onComplete: () => {
+            label.style.display = 'none';
+        }
+    });
+}
+
 
 function flyToDefaultView() {
     gsap.to(camera.position, {
@@ -228,6 +330,7 @@ function flyToState(stateMesh) {
 
     // Animate camera position and controls target together
     const timeline = gsap.timeline();
+    setLabelTextForState(stateMesh)
 
     timeline.to(camera.position, {
         duration: 1.2,
@@ -245,6 +348,10 @@ function flyToState(stateMesh) {
         z: boxCenter.z,
         ease: 'power2.inOut'
     }, 0);
+
+    timeline.call(() => {
+        showLabelForState(stateMesh);
+    });
 }
 
 
@@ -259,12 +366,18 @@ function getZoomHeight() {
 }
 
 // Animation loop
-const clock = new THREE.Clock();
+// const clock = new THREE.Clock();
 function tick() {
     controls.update();
     renderer.render(scene, camera);
     raycastRender();
+
+    if (selectedState && !labelFadingOut) {
+        updateLabelPosition(selectedState);
+    }
+
     requestAnimationFrame(tick);
+
 }
 
 function raycastRender() {
@@ -296,3 +409,10 @@ function onPointerMove(event) {
         calculateStateHover(intersects);
     }
 }
+
+document.getElementById('close-label').addEventListener('click', () => {
+    deselectState();
+    flyToDefaultView();
+    document.getElementById('state-label').style.display = 'none';
+});
+

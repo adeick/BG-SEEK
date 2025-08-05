@@ -33,3 +33,37 @@ body {
     left: 0;
     outline: none;
 }
+
+#state-label {
+    position: absolute;
+    background-color: #0b3b61;
+    /* your target minimalist blue */
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    pointer-events: auto;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+#state-label .label-text {
+    display: inline-block;
+}
+
+#state-label .label-close {
+    margin-left: 12px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+#state-label .label-close:hover {
+    color: #ddd;
+}
