@@ -54,7 +54,7 @@ const selectedColor = 0x335b83;
 //Label HTML
 const label = document.getElementById('state-label');
 const labelText = label.querySelector('.label-text');
-const closeBtn = label.querySelector('.label-close');
+// const closeBtn = label.querySelector('.label-close');
 let labelFadingOut = false;
 
 
@@ -176,11 +176,7 @@ function deselectState() {
         selectedState = null;
         document.getElementById('state-label').style.display = 'none';
 
-        const uniList = document.getElementById('university-list');
-        if (uniList) {
-            uniList.classList.remove('visible');
-            // uniList.innerHTML = ''; // optional: clear content
-        }
+        hideUniversityList()
     }
 }
 
@@ -260,11 +256,11 @@ function showLabelForState(stateMesh) {
     });
 
     // Attach close handler
-    closeBtn.onclick = () => {
-        hideLabel();
-        flyToDefaultView();
-        deselectState();
-    };
+    // closeBtn.onclick = () => {
+    //     hideLabel();
+    //     flyToDefaultView();
+    //     deselectState();
+    // };
 }
 
 function updateLabelPosition(stateMesh) {
@@ -371,7 +367,6 @@ function flyToState(stateMesh) {
     // Add some padding to zoom out a little extra
     const paddingFactor = 1.3;
     const zoomHeight = requiredDistance * paddingFactor;
-    console.log("zh " + zoomHeight)
 
     // Position the camera offset from the state center
     const offset = new THREE.Vector3(0, zoomHeight, zoomHeight * 0.3);
@@ -388,6 +383,7 @@ function flyToState(stateMesh) {
     // Animate camera position and controls target together
     const timeline = gsap.timeline();
     setLabelTextForState(stateMesh)
+    showLabelForState(stateMesh);
 
     timeline.to(camera.position, {
         duration: 1.2,
@@ -410,7 +406,7 @@ function flyToState(stateMesh) {
     }, 0);
 
     timeline.call(() => {
-        showLabelForState(stateMesh);
+        // showLabelForState(stateMesh);
     });
 }
 
@@ -471,22 +467,26 @@ function onPointerMove(event) {
 }
 
 function showUniversityList(stateName, infoArray) {
-    const panel = document.getElementById('university-list');
-    const nameEl = document.getElementById('panel-state-name');
-    const listEl = document.getElementById('state-info-list');
+    const listContainer = document.getElementById('university-list'); // your container element
+    listContainer.innerHTML = ''; // clear previous items
 
-    nameEl.textContent = stateName.replace(/_/g, ' ');
-    listEl.innerHTML = ''; // Clear existing list
-    infoArray.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = item;
-        listEl.appendChild(li);
+    infoArray.forEach(university => {
+        // Create a div with the 'university-item' class
+        const item = document.createElement('div');
+        item.className = 'university-item';
+        item.textContent = university; // or use university.name if objects
+
+        listContainer.appendChild(item);
     });
 
-    panel.classList.add('visible');
+    // Make sure the container is visible (you might already have this logic)
+    listContainer.classList.add('visible');
 }
 
+
+
 function hideUniversityList() {
+    console.log('hide universitylist')
     const panel = document.getElementById('university-list');
     panel.classList.remove('visible');
 }
