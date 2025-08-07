@@ -217,10 +217,17 @@ function handleTapOnState(event) {
     flyToState(selectedState);
 
     const readableName = selectedState.name.replace(/_/g, ' ');
-    const infoArray = universityData
+    // const infoArray = universityData
+    //     .filter(row => row.State.trim().toLowerCase() === readableName.toLowerCase())
+    //     .map(row => { row.University, row.URL });
+
+    const filteredUniversities = universityData
         .filter(row => row.State.trim().toLowerCase() === readableName.toLowerCase())
-        .map(row => row.University);
-    showUniversityList(readableName, infoArray);
+        .map(row => ({
+            university: row.University.trim(),
+            url: row.URL?.trim() || '#'
+        }));
+    showUniversityList(filteredUniversities);
 }
 
 function setLabelTextForState(stateMesh) {
@@ -466,23 +473,50 @@ function onPointerMove(event) {
     }
 }
 
-function showUniversityList(stateName, infoArray) {
-    const listContainer = document.getElementById('university-list'); // your container element
-    listContainer.innerHTML = ''; // clear previous items
+// function showUniversityList(stateName, infoArray) {
+//     const listContainer = document.getElementById('university-list'); // your container element
+//     listContainer.innerHTML = ''; // clear previous items
 
-    infoArray.forEach(university => {
-        // Create a div with the 'university-item' class
-        const item = document.createElement('div');
-        item.className = 'university-item';
-        item.textContent = university; // or use university.name if objects
+//     infoArray.forEach(university => {
+//         // Create a div with the 'university-item' class
+//         const item = document.createElement('div');
+//         item.className = 'university-item';
+//         item.textContent = university; // or use university.name if objects
 
-        listContainer.appendChild(item);
+//         listContainer.appendChild(item);
+//     });
+
+//     // Make sure the container is visible (you might already have this logic)
+//     listContainer.classList.add('visible');
+// }
+
+
+function showUniversityList(universities) {
+    const panel = document.getElementById('university-list');
+    panel.innerHTML = ''; // Clear previous list
+
+    universities.forEach(({ university, url }) => {
+        const card = document.createElement('div');
+        card.className = 'university-item';
+        // card.textContent = university;
+        const link = document.createElement('a');
+        link.href = url || '#';
+        link.target = '_blank'; // open in new tab
+        link.rel = 'noopener noreferrer';
+        link.textContent = university;
+
+        // Style link to inherit card styles and remove default underline
+        link.style.color = 'inherit';
+        link.style.textDecoration = 'none';
+        link.style.display = 'block';
+        link.style.width = '100%';
+
+        card.appendChild(link);
+        panel.appendChild(card);
     });
 
-    // Make sure the container is visible (you might already have this logic)
-    listContainer.classList.add('visible');
+    panel.classList.add('visible');
 }
-
 
 
 function hideUniversityList() {

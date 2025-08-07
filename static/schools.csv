@@ -1,227 +1,227 @@
-State,University
-Alabama,Auburn University
-Alabama,Samford University
-Alabama,Troy University
-Alabama,University of Alabama
-Alabama,University of Alabama at Birmingham
-Alabama,University of Alabama – Huntsville
-Arizona,Arizona State University
-Arizona,Northern Arizona University
-Arizona,University of Arizona
-Arkansas,University of Arkansas
-California,"California State University, Fullerton"
-California,"California State University, Long Beach"
-California,"California State University, Stanislaus"
-California,San Diego State University
-California,San Francisco State University
-California,San José State University
-California,UCLA
-California,"University of California, Berkeley"
-California,"University of California, Irvine"
-California,University of Southern California
-Colorado,Auraria Campus
-Colorado,Colorado Mesa University
-Colorado,Colorado School of Mines
-Colorado,Colorado State University
-Colorado,United States Air Force Academy
-Colorado,University of Colorado
-Colorado,University of Denver
-Colorado,University of Northern Colorado
-Connecticut,Central Connecticut State University
-Connecticut,United States Coast Guard Academy
-Connecticut,University of Connecticut
-Delaware,University of Delaware
-Florida,Florida Atlantic University
-Florida,Florida International University
-Florida,Florida State University
-Florida,University of Florida
-Florida,University of Miami
-Florida,University of Tampa
-Georgia,Georgia College & State University
-Georgia,Georgia Institute of Technology
-Georgia,Georgia Southern University
-Georgia,Kennesaw State University
-Georgia,University of Georgia
-Georgia,University of West Georgia
-Idaho,Boise State University
-Idaho,Idaho State University
-Idaho,University of Idaho
-Illinois,Eastern Illinois University
-Illinois,Illinois State University
-Illinois,Naperville
-Illinois,Northern Illinois University
-Illinois,Southern Illinois University Edwardsville
-Illinois,University of Illinois
-Illinois,University of Illinois Chicago
-Indiana,Ball State University
-Indiana,Indiana University
-Indiana,Indiana University Purdue University Indianapolis
-Indiana,University of Southern Indiana
-Indiana,Valparaiso University
-Iowa,Drake University
-Iowa,Iowa State University
-Iowa,Loras College
-Iowa,The University of Iowa
-Iowa,University of Northern Iowa
-Kansas,Benedictine College
-Kansas,Emporia State University
-Kansas,Fort Hays State University
-Kansas,Kansas State University
-Kansas,Pittsburg State University
-Kansas,University of Kansas
-Kansas,Wichita State University
-Kentucky,Murray State University
-Kentucky,University of Kentucky
-Kentucky,University of Louisville
-Kentucky,Western Kentucky University
-Louisiana,Louisiana State University
-Louisiana,Louisiana Tech University
-Louisiana,McNeese State University
-Louisiana,Nicholls State University
-Louisiana,Northwestern State University
-Louisiana,Tulane University
-Louisiana,University of Louisiana
-Louisiana,University of Louisiana Monroe
-Maine,University of Maine
-Maryland,Johns Hopkins University
-Maryland,Towson University
-Maryland,United States Naval Academy
-Maryland,University of Maryland
-Massachusetts,Boston Area Campuses
-Massachusetts,Boston University
-Massachusetts,Bridgewater State University
-Massachusetts,Campus Worcester
-Massachusetts,Harvard University
-Massachusetts,Massachusetts Institute of Technology
-Massachusetts,University of Massachusetts Amherst
-Massachusetts,Worcester Polytechnic Institute
-Michigan,Central Michigan University
-Michigan,Grand Valley State University
-Michigan,Hope College
-Michigan,Michigan Technological University
-Michigan,Northern Michigan University
-Michigan,Oakland University
-Michigan,Wayne State University
-Minnesota,Bemidji State University
-Minnesota,Minnesota State University
-Minnesota,University of Minnesota Duluth
-Minnesota,Winona State University
-Mississippi,Mississippi State University
-Mississippi,University of Southern Mississippi
-Missouri,Lindenwood University
-Missouri,Missouri University of Science and Technology
-Missouri,Northwest Missouri State University
-Missouri,Southeast Missouri State University
-Missouri,University of Missouri
-Montana,Carroll College
-Montana,Montana State University
-Montana,University of Montana
-Nebraska,University of Nebraska Lincoln
-Nebraska,University of Nebraska Omaha
-Nebraska,University of Nebraska at Kearney
-Nebraska,Wayne State College
-Nevada,"University of Nevada, Las Vegas"
-Nevada,"University of Nevada, Reno"
-New Jersey,Montclair State University
-New Jersey,Seton Hall University
-New York,Columbia University
-New York,New York University
-New York,Queens College
-New York,Stony Brook University
-New York,United States Military Academy
-North Carolina,Belmont Abbey College
-North Carolina,Duke University
-North Carolina,East Carolina University
-North Carolina,Wake Forest University
-North Dakota,Dickinson State University
-North Dakota,North Dakota State University
-North Dakota,University of Mary
-North Dakota,University of North Dakota
-Ohio,Bowling Green State University
-Ohio,Miami University
-Ohio,Ohio Northern University
-Ohio,The Ohio State University
-Ohio,University of Akron
-Ohio,University of Cincinnati
-Ohio,University of Toledo
-Ohio,Wright State University
-Oklahoma,Oklahoma State University
-Oklahoma,The University of Central Oklahoma
-Oklahoma,University of Oklahoma
-Oklahoma,University of Tulsa
-Oregon,Oregon State University – Cascades
-Oregon,University of Oregon
-Pennsylvania,Carnegie Mellon University
-Pennsylvania,Drexel University
-Pennsylvania,Lehigh University
-Pennsylvania,PennWest Edinboro
-Pennsylvania,Saint Francis University
-Pennsylvania,Shippensburg University
-Pennsylvania,Temple University
-Pennsylvania,University of Pennsylvania
-Pennsylvania,University of Pittsburgh
-Pennsylvania,West Chester University
-Rhode Island,Brown University
-Rhode Island,University of Rhode Island
-South Carolina,Clemson University
-South Carolina,Coastal Carolina University
-South Carolina,University of South Carolina – Columbia
-South Dakota,Black Hills State University
-South Dakota,Northern State University
-South Dakota,South Dakota Mines
-South Dakota,South Dakota State University
-South Dakota,University of South Dakota
-Tennessee,Belmont University – Nashville
-Tennessee,East Tennessee State University
-Tennessee,Middle Tennessee State University
-Tennessee,University of Memphis
-Tennessee,University of Tennessee
-Tennessee,University of Tennessee at Chattanooga
-Tennessee,Vanderbilt University
-Texas,Baylor University
-Texas,Southern Methodist University
-Texas,Stephen F. Austin State University
-Texas,Texas A&M University
-Texas,Texas A&M University – Kingsville
-Texas,Texas State University
-Texas,The University of Texas at Dallas
-Texas,University of Dallas
-Texas,University of Texas Rio Grande Valley
-Texas,University of Texas at Austin
-Texas,University of Texas – San Antonio
-Utah,University of Utah
-Virginia,College of William & Mary
-Virginia,George Mason University
-Virginia,James Madison University
-Virginia,University of Virginia
-Virginia,Virginia Tech
-Washington,Eastern Washington University
-Washington,University of Washington
-Washington,Western Washington University
-"Washington, DC",George Washington University
-"Washington, DC",Howard University
-West Virginia,West Virginia University
-Wisconsin,University of Wisconsin Eau Claire
-Wisconsin,University of Wisconsin Madison
-Wisconsin,University of Wisconsin Stevens Point
-Wisconsin,University of Wisconsin – Milwaukee
-Wisconsin,University of Wisconsin – Stout
-Wisconsin,University of Wisconsin-La Crosse
-Wisconsin,University of Wisconsin-Oshkosh
-Wisconsin,University of Wisconsin-Platteville
-Austria,St. Pölten University of Applied Sciences
-Austria,University of Krems
-Austria,University of Vienna
-Germany,University of Düsseldorf
-Germany,University of Passau
-Ireland,Dublin
-Ireland,University College Cork
-Mexico,Technologico de Monterrey
-Mexico,Universidad de Monterrey
-Northern Ireland,Queen’s University Belfast
-Digital Outreach,Digital Outreach
-DigitalIowa,Simpson College (Digital Campus)
-DigitalHawaii,University of Hawaii (Digital Campus)
-DigitalNew Hampshire,University of New Hampshire (Digital Campus)
-DigitalNew York,Hofstra University (Digital Campus)
-DigitalVermont,University of Vermont (Digital Campus)
+State,University,URL
+Alabama,Auburn University,https://focus.org/campus/auburn-university/
+Alabama,Samford University,https://focus.org/campus/samford-university/
+Alabama,Troy University,https://focus.org/campus/troy-university/
+Alabama,University of Alabama,https://focus.org/campus/the-university-of-alabama/
+Alabama,University of Alabama at Birmingham,https://focus.org/campus/university-of-alabama-at-birmingham/
+Alabama,University of Alabama – Huntsville,https://focus.org/campus/university-of-alabama-huntsville/
+Arizona,Arizona State University,https://focus.org/campus/arizona-state-university/
+Arizona,Northern Arizona University,https://focus.org/campus/northern-arizona-university/
+Arizona,University of Arizona,https://focus.org/campus/university-of-arizona/
+Arkansas,University of Arkansas,https://focus.org/campus/university-of-arkansas/
+California,"California State University, Fullerton",https://focus.org/campus/california-state-university-fullerton/
+California,"California State University, Long Beach",https://focus.org/campus/california-state-university-long-beach/
+California,"California State University, Stanislaus",https://focus.org/campus/california-state-university-stanislaus/
+California,San Diego State University,https://focus.org/campus/san-diego-state-university/
+California,San Francisco State University,https://focus.org/campus/san-francisco-state-university/
+California,San José State University,https://focus.org/campus/san-jose-state-university/
+California,UCLA,https://focus.org/campus/ucla/
+California,"University of California, Berkeley",https://focus.org/campus/university-of-california-berkeley/
+California,"University of California, Irvine",https://focus.org/campus/university-of-california-irvine/
+California,University of Southern California,https://focus.org/campus/university-of-southern-california/
+Colorado,Auraria Campus,https://focus.org/campus/auraria-campus/
+Colorado,Colorado Mesa University,https://focus.org/campus/colorado-mesa-university/
+Colorado,Colorado School of Mines,https://focus.org/campus/colorado-school-of-mines/
+Colorado,Colorado State University,https://focus.org/campus/colorado-state-university/
+Colorado,United States Air Force Academy,https://focus.org/campus/united-states-air-force-academy/
+Colorado,University of Colorado,https://focus.org/campus/university-of-colorado/
+Colorado,University of Denver,https://focus.org/campus/university-of-denver/
+Colorado,University of Northern Colorado,https://focus.org/campus/university-of-northern-colorado/
+Connecticut,Central Connecticut State University,https://focus.org/campus/central-connecticut-state-university/
+Connecticut,United States Coast Guard Academy,https://focus.org/campus/united-states-coast-guard-academy/
+Connecticut,University of Connecticut,https://focus.org/campus/university-of-connecticut/
+Delaware,University of Delaware,https://focus.org/campus/university-of-delaware/
+Florida,Florida Atlantic University,https://focus.org/campus/florida-atlantic-university/
+Florida,Florida International University,https://focus.org/campus/florida-international-university/
+Florida,Florida State University,https://focus.org/campus/florida-state-university/
+Florida,University of Florida,https://focus.org/campus/university-of-florida/
+Florida,University of Miami,https://focus.org/campus/university-of-miami/
+Florida,University of Tampa,https://focus.org/campus/university-of-tampa/
+Georgia,Georgia College & State University,https://focus.org/campus/georgia-college-state-university/
+Georgia,Georgia Institute of Technology,https://focus.org/campus/georgia-institute-of-technology/
+Georgia,Georgia Southern University,https://focus.org/campus/georgia-southern-university/
+Georgia,Kennesaw State University,https://focus.org/campus/kennesaw-state-university/
+Georgia,University of Georgia,https://focus.org/campus/university-of-georgia/
+Georgia,University of West Georgia,https://focus.org/campus/university-of-west-georgia/
+Hawaii,University of Hawaii (Digital Campus),https://focus.org/campus/university-of-hawaii/
+Idaho,Boise State University,https://focus.org/campus/boise-state-university/
+Idaho,Idaho State University,https://focus.org/campus/idaho-state-university/
+Idaho,University of Idaho,https://focus.org/campus/university-of-idaho/
+Illinois,Eastern Illinois University,https://focus.org/campus/eastern-illinois-university/
+Illinois,Illinois State University,https://focus.org/campus/illinois-state-university/
+Illinois,Naperville,https://focus.org/campus/naperville/
+Illinois,Northern Illinois University,https://focus.org/campus/northern-illinois-university/
+Illinois,Southern Illinois University Edwardsville,https://focus.org/campus/southern-illinois-university-edwardsville/
+Illinois,University of Illinois,https://focus.org/campus/university-of-illinois/
+Illinois,University of Illinois Chicago,https://focus.org/campus/university-of-illinois-chicago/
+Indiana,Ball State University,https://focus.org/campus/ball-state-university/
+Indiana,Indiana University,https://focus.org/campus/indiana-university/
+Indiana,Indiana University Purdue University Indianapolis,https://focus.org/campus/indiana-university-purdue-university-indianapolis/
+Indiana,University of Southern Indiana,https://focus.org/campus/university-of-southern-indiana/
+Indiana,Valparaiso University,https://focus.org/campus/valparaiso-university/
+Iowa,Drake University,https://focus.org/campus/drake-university/
+Iowa,Iowa State University,https://focus.org/campus/iowa-state-university/
+Iowa,Loras College,https://focus.org/campus/loras-college/
+Iowa,Simpson College (Digital Campus),https://focus.org/campus/simpson-college/
+Iowa,The University of Iowa,https://focus.org/campus/the-university-of-iowa/
+Iowa,University of Northern Iowa,https://focus.org/campus/university-of-northern-iowa/
+Kansas,Benedictine College,https://focus.org/campus/benedictine-college/
+Kansas,Emporia State University,https://focus.org/campus/emporia-state-university/
+Kansas,Fort Hays State University,https://focus.org/campus/fort-hays-state-university/
+Kansas,Kansas State University,https://focus.org/campus/kansas-state-university/
+Kansas,Pittsburg State University,https://focus.org/campus/pittsburg-state-university/
+Kansas,University of Kansas,https://focus.org/campus/university-of-kansas/
+Kansas,Wichita State University,https://focus.org/campus/wichita-state-university/
+Kentucky,Murray State University,https://focus.org/campus/murray-state-university/
+Kentucky,University of Kentucky,https://focus.org/campus/university-of-kentucky/
+Kentucky,University of Louisville,https://focus.org/campus/university-of-louisville/
+Kentucky,Western Kentucky University,https://focus.org/campus/western-kentucky-university/
+Louisiana,Louisiana State University,https://focus.org/campus/louisiana-state-university/
+Louisiana,Louisiana Tech University,https://focus.org/campus/louisiana-tech-university/
+Louisiana,McNeese State University,https://focus.org/campus/mcneese-state-university/
+Louisiana,Nicholls State University,https://focus.org/campus/nicholls-state-university/
+Louisiana,Northwestern State University,https://focus.org/campus/northwestern-state-university/
+Louisiana,Tulane University,https://focus.org/campus/tulane-university/
+Louisiana,University of Louisiana,https://focus.org/campus/university-of-louisiana/
+Louisiana,University of Louisiana Monroe,https://focus.org/campus/university-of-louisiana-monroe/
+Maine,University of Maine,https://focus.org/campus/university-of-maine/
+Maryland,Johns Hopkins University,https://focus.org/campus/johns-hopkins-university/
+Maryland,Towson University,https://focus.org/campus/towson-university/
+Maryland,United States Naval Academy,https://focus.org/campus/united-states-naval-academy/
+Maryland,University of Maryland,https://focus.org/campus/university-of-maryland/
+Massachusetts,Boston Area Campuses,https://focus.org/campus/boston-area-campuses/
+Massachusetts,Boston University,https://focus.org/campus/boston-university/
+Massachusetts,Bridgewater State University,https://focus.org/campus/bridgewater-state-university/
+Massachusetts,Campus Worcester,https://focus.org/campus/campus-worcester/
+Massachusetts,Harvard University,https://focus.org/campus/harvard-university/
+Massachusetts,Massachusetts Institute of Technology,https://focus.org/campus/massachusetts-institute-of-technology/
+Massachusetts,University of Massachusetts Amherst,https://focus.org/campus/university-of-massachusetts-amherst/
+Massachusetts,Worcester Polytechnic Institute,https://focus.org/campus/worcester-polytechnic-institute/
+Michigan,Central Michigan University,https://focus.org/campus/central-michigan-university/
+Michigan,Grand Valley State University,https://focus.org/campus/grand-valley-state-university/
+Michigan,Hope College,https://focus.org/campus/hope-college/
+Michigan,Michigan Technological University,https://focus.org/campus/michigan-technological-university/
+Michigan,Northern Michigan University,https://focus.org/campus/northern-michigan-university/
+Michigan,Oakland University,https://focus.org/campus/oakland-university/
+Michigan,Wayne State University,https://focus.org/campus/wayne-state-university/
+Minnesota,Bemidji State University,https://focus.org/campus/bemidji-state-university/
+Minnesota,Minnesota State University,https://focus.org/campus/minnesota-state-university/
+Minnesota,University of Minnesota Duluth,https://focus.org/campus/university-of-minnesota-duluth/
+Minnesota,Winona State University,https://focus.org/campus/winona-state-university/
+Mississippi,Mississippi State University,https://focus.org/campus/mississippi-state-university/
+Mississippi,University of Southern Mississippi,https://focus.org/campus/university-of-southern-mississippi/
+Missouri,Lindenwood University,https://focus.org/campus/lindenwood-university/
+Missouri,Missouri University of Science and Technology,https://focus.org/campus/missouri-university-of-science-and-technology/
+Missouri,Northwest Missouri State University,https://focus.org/campus/northwest-missouri-state-university/
+Missouri,Southeast Missouri State University,https://focus.org/campus/southeast-missouri-state-university/
+Missouri,University of Missouri,https://focus.org/campus/university-of-missouri/
+Montana,Carroll College,https://focus.org/campus/carroll-college/
+Montana,Montana State University,https://focus.org/campus/montana-state-university/
+Montana,University of Montana,https://focus.org/campus/university-of-montana/
+Nebraska,University of Nebraska Lincoln,https://focus.org/campus/university-of-nebraska-lincoln/
+Nebraska,University of Nebraska Omaha,https://focus.org/campus/university-of-nebraska-omaha/
+Nebraska,University of Nebraska at Kearney,https://focus.org/campus/university-of-nebraska-at-kearney/
+Nebraska,Wayne State College,https://focus.org/campus/wayne-state-college/
+Nevada,"University of Nevada, Las Vegas",https://focus.org/campus/university-of-nevada-las-vegas/
+Nevada,"University of Nevada, Reno",https://focus.org/campus/university-of-nevada-reno/
+New Hampshire,University of New Hampshire (Digital Campus),https://focus.org/campus/university-of-new-hampshire/
+New Jersey,Montclair State University,https://focus.org/campus/montclair-state-university/
+New Jersey,Seton Hall University,https://focus.org/campus/seton-hall-university/
+New York,Columbia University,https://focus.org/campus/columbia-university/
+New York,Hofstra University (Digital Campus),https://focus.org/campus/hofstra-university/
+New York,New York University,https://focus.org/campus/new-york-university/
+New York,Queens College,https://focus.org/campus/queens-college/
+New York,Stony Brook University,https://focus.org/campus/stony-brook-university/
+New York,United States Military Academy,https://focus.org/campus/united-states-military-academy/
+North Carolina,Belmont Abbey College,https://focus.org/campus/belmont-abbey-college/
+North Carolina,Duke University,https://focus.org/campus/duke-university/
+North Carolina,East Carolina University,https://focus.org/campus/eastern-carolina-university/
+North Carolina,Wake Forest University,https://focus.org/campus/wake-forest-university/
+North Dakota,Dickinson State University,https://focus.org/campus/dickinson-state-university/
+North Dakota,North Dakota State University,https://focus.org/campus/north-dakota-state-university/
+North Dakota,University of Mary,https://focus.org/campus/university-of-mary/
+North Dakota,University of North Dakota,https://focus.org/campus/university-of-north-dakota/
+Ohio,Bowling Green State University,https://focus.org/campus/bowling-green-state-university/
+Ohio,Miami University,https://focus.org/campus/miami-university/
+Ohio,Ohio Northern University,https://focus.org/campus/ohio-northern-university/
+Ohio,The Ohio State University,https://focus.org/campus/the-ohio-state-university/
+Ohio,University of Akron,https://focus.org/campus/university-of-akron/
+Ohio,University of Cincinnati,https://focus.org/campus/university-of-cincinnati/
+Ohio,University of Toledo,https://focus.org/campus/university-of-toledo/
+Ohio,Wright State University,https://focus.org/campus/wright-state-university/
+Oklahoma,Oklahoma State University,https://focus.org/campus/oklahoma-state-university/
+Oklahoma,The University of Central Oklahoma,https://focus.org/campus/the-university-of-central-oklahoma/
+Oklahoma,University of Oklahoma,https://focus.org/campus/university-of-oklahoma/
+Oklahoma,University of Tulsa,https://focus.org/campus/university-of-tulsa/
+Oregon,Oregon State University – Cascades,https://focus.org/campus/oregon-state-university-cascades/
+Oregon,University of Oregon,https://focus.org/campus/university-of-oregon/
+Pennsylvania,Carnegie Mellon University,https://focus.org/campus/carnegie-mellon-university/
+Pennsylvania,Drexel University,https://focus.org/campus/drexel-university/
+Pennsylvania,Lehigh University,https://focus.org/campus/lehigh-university/
+Pennsylvania,PennWest Edinboro,https://focus.org/campus/edinboro-university/
+Pennsylvania,Saint Francis University,https://focus.org/campus/saint-francis-university/
+Pennsylvania,Shippensburg University,https://focus.org/campus/shippensburg-university/
+Pennsylvania,Temple University,https://focus.org/campus/temple-university/
+Pennsylvania,University of Pennsylvania,https://focus.org/campus/university-of-pennsylvania/
+Pennsylvania,University of Pittsburgh,https://focus.org/campus/university-of-pittsburgh/
+Pennsylvania,West Chester University,https://focus.org/campus/west-chester-university/
+Rhode Island,Brown University,https://focus.org/campus/brown-university/
+Rhode Island,University of Rhode Island,https://focus.org/campus/university-of-rhode-island/
+South Carolina,Clemson University,https://focus.org/campus/clemson-university/
+South Carolina,Coastal Carolina University,https://focus.org/campus/coastal-carolina-university/
+South Carolina,University of South Carolina – Columbia,https://focus.org/campus/university-of-south-carolina-columbia/
+South Dakota,Black Hills State University,https://focus.org/campus/black-hills-state-university/
+South Dakota,Northern State University,https://focus.org/campus/northern-state-university/
+South Dakota,South Dakota Mines,https://focus.org/campus/south-dakota-mines/
+South Dakota,South Dakota State University,https://focus.org/campus/south-dakota-state-university/
+South Dakota,University of South Dakota,https://focus.org/campus/university-of-south-dakota/
+Tennessee,Belmont University – Nashville,https://focus.org/campus/belmont-university-nashville/
+Tennessee,East Tennessee State University,https://focus.org/campus/east-tennessee-state-university/
+Tennessee,Middle Tennessee State University,https://focus.org/campus/middle-tennessee-state-university/
+Tennessee,University of Memphis,https://focus.org/campus/university-of-memphis/
+Tennessee,University of Tennessee,https://focus.org/campus/university-of-tennessee/
+Tennessee,University of Tennessee at Chattanooga,https://focus.org/campus/university-of-tennessee-at-chattanooga/
+Tennessee,Vanderbilt University,https://focus.org/campus/vanderbilt-university/
+Texas,Baylor University,https://focus.org/campus/baylor-university/
+Texas,Southern Methodist University,https://focus.org/campus/southern-methodist-university/
+Texas,Stephen F. Austin State University,https://focus.org/campus/stephen-f-austin-state-university/
+Texas,Texas A&M University,https://focus.org/campus/texas-a-m-university/
+Texas,Texas A&M University – Kingsville,https://focus.org/campus/texas-a-m-university-kingsville/
+Texas,Texas State University,https://focus.org/campus/texas-state-university/
+Texas,The University of Texas at Dallas,https://focus.org/campus/the-university-of-texas-at-dallas/
+Texas,University of Dallas,https://focus.org/campus/university-of-dallas/
+Texas,University of Texas Rio Grande Valley,https://focus.org/campus/university-of-texas-rio-grande-valley/
+Texas,University of Texas at Austin,https://focus.org/campus/university-of-texas-at-austin/
+Texas,University of Texas – San Antonio,https://focus.org/campus/university-of-texas-san-antonio/
+Utah,University of Utah,https://focus.org/campus/university-of-utah/
+Vermont,University of Vermont (Digital Campus),https://focus.org/campus/university-of-vermont/
+Virginia,College of William & Mary,https://focus.org/campus/college-of-william-mary/
+Virginia,George Mason University,https://focus.org/campus/george-mason-university/
+Virginia,James Madison University,https://focus.org/campus/james-madison-university/
+Virginia,University of Virginia,https://focus.org/campus/university-of-virginia/
+Virginia,Virginia Tech,https://focus.org/campus/virginia-tech/
+Washington,Eastern Washington University,https://focus.org/campus/eastern-washington-university/
+Washington,University of Washington,https://focus.org/campus/university-of-washington/
+Washington,Western Washington University,https://focus.org/campus/western-washington-university/
+"Washington, DC",George Washington University,https://focus.org/campus/george-washington-university/
+"Washington, DC",Howard University,https://focus.org/campus/howard-university/
+West Virginia,West Virginia University,https://focus.org/campus/west-virginia-university/
+Wisconsin,University of Wisconsin Eau Claire,https://focus.org/campus/university-of-wisconsin-eau-claire/
+Wisconsin,University of Wisconsin Madison,https://focus.org/campus/university-of-wisconsin-madison/
+Wisconsin,University of Wisconsin Stevens Point,https://focus.org/campus/university-of-wisconsin-stevens-point/
+Wisconsin,University of Wisconsin – Milwaukee,https://focus.org/campus/university-of-wisconsin-milwaukee/
+Wisconsin,University of Wisconsin – Stout,https://focus.org/campus/university-of-wisconsin-stout/
+Wisconsin,University of Wisconsin-La Crosse,https://focus.org/campus/university-of-wisconsin-la-crosse/
+Wisconsin,University of Wisconsin-Oshkosh,https://focus.org/campus/university-of-wisconsin-oshkosh/
+Wisconsin,University of Wisconsin-Platteville,https://focus.org/campus/university-of-wisconsin-platteville/
+Austria,St. Pölten University of Applied Sciences,https://focus.org/campus/st-polten-university-of-applied-sciences/
+Austria,University of Krems,https://focus.org/campus/university-of-krems/
+Austria,University of Vienna,https://focus.org/campus/university-of-vienna/
+Germany,University of Düsseldorf,https://focus.org/campus/university-of-dusseldorf/
+Germany,University of Passau,https://focus.org/campus/university-of-passau/
+Ireland,Dublin,https://focus.org/campus/dublin/
+Ireland,University College Cork,https://focus.org/campus/university-college-cork/
+Mexico,Technologico de Monterrey,https://focus.org/campus/technologico-de-monterrey/
+Mexico,Universidad de Monterrey,https://focus.org/campus/universidad-de-monterrey/
+Northern Ireland,Queen’s University Belfast,https://focus.org/campus/queen-s-university-belfast/
+Digital Outreach,Digital Outreach,https://focus.org/campus/digital-outreach/
