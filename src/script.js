@@ -348,13 +348,22 @@ function flyToState(stateMesh) {
     // Camera parameters
     const fov = THREE.MathUtils.degToRad(camera.fov); // vertical FOV in radians
     const aspect = sizes.width / sizes.height;
+    const isMobile = window.innerWidth / window.innerHeight < 1;
 
     // Calculate horizontal FOV
-    const horizontalFOV = 2 * Math.atan(Math.tan(fov / 2) * aspect);
+    // const horizontalFOV = 2 * Math.atan(Math.tan(fov / 2) * aspect);
+    const heightFOV = 2 * Math.tan(fov / 2);
 
     // Calculate distance needed to fit the box height and width in view
-    const distanceForHeight = boxSize.z / (2 * Math.tan(fov / 2));
-    const distanceForWidth = boxSize.x / (2 * Math.tan(horizontalFOV / 2));
+    let distanceForHeight = boxSize.z / heightFOV;
+    let distanceForWidth = boxSize.x / (heightFOV * aspect);
+
+    if (isMobile) {
+        distanceForHeight *= 1.5;
+    }
+    else {
+        distanceForWidth *= 1.5;
+    }
 
     // Choose the larger distance to fit entire box
     const requiredDistance = Math.max(distanceForHeight, distanceForWidth);
@@ -362,12 +371,12 @@ function flyToState(stateMesh) {
     // Add some padding to zoom out a little extra
     const paddingFactor = 1.3;
     const zoomHeight = requiredDistance * paddingFactor;
+    console.log("zh " + zoomHeight)
 
     // Position the camera offset from the state center
     const offset = new THREE.Vector3(0, zoomHeight, zoomHeight * 0.3);
 
     // --- Determine screen-based framing offset ---
-    const isMobile = window.innerWidth / window.innerHeight < 1;
     const offsetAmount = isMobile ? 0.2 * zoomHeight : zoomHeight * 0.4;
     const screenOffset = isMobile
         ? new THREE.Vector3(0, 0, offsetAmount) // use z value not y (up on screen)
