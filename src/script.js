@@ -34,6 +34,11 @@ fetch('/schools.csv')
         console.error("Error loading university data:", err);
     });
 
+//HTML objects (state labels and text)
+const label = document.getElementById('state-label');
+const labelText = label.querySelector('.label-text');
+// const closeBtn = label.querySelector('.label-close');
+let labelFadingOut = false;
 
 // Canvas and scene setup
 const canvas = document.querySelector('canvas.webgl');
@@ -51,36 +56,6 @@ const baseColor = 0x1A4D77;
 const hoverColor = 0x335b83;
 const selectedColor = 0x335b83;
 
-//Label HTML
-const label = document.getElementById('state-label');
-const labelText = label.querySelector('.label-text');
-// const closeBtn = label.querySelector('.label-close');
-let labelFadingOut = false;
-
-
-// Track current interaction state
-let hoveredState = null;
-let selectedState = null;
-
-// List of selectable meshes
-const selectableStates = [];
-
-// Load the GLB map and extract state meshes
-const loader = new GLTFLoader();
-loader.load(USA_Map_URL, (gltf) => {
-    const map = gltf.scene;
-    map.traverse((child) => {
-        if (child.isMesh) {
-            selectableStates.push(child);
-        }
-        if (child.isMesh && child.material?.color) {
-            child.material.color.set(baseColor);
-            child.userData.originalColor = child.material.color.clone();
-        }
-    });
-    scene.add(map);
-}, undefined, (error) => console.error(error));
-
 // Camera setup
 const sizes = {
     width: window.innerWidth,
@@ -88,7 +63,6 @@ const sizes = {
 };
 const defaultCameraPos = new THREE.Vector3(0, 10, 3);
 const defaultTarget = new THREE.Vector3(0, 0, 0);
-
 
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 2000);
 // camera.position.set(defaultCameraPos);
@@ -121,6 +95,29 @@ const renderer = new THREE.WebGLRenderer({ canvas });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+// Track current interaction state
+let hoveredState = null;
+let selectedState = null;
+
+// List of selectable meshes
+const selectableStates = [];
+
+// Load the GLB map and extract state meshes
+const loader = new GLTFLoader();
+loader.load(USA_Map_URL, (gltf) => {
+    const map = gltf.scene;
+    map.traverse((child) => {
+        if (child.isMesh) {
+            selectableStates.push(child);
+        }
+        if (child.isMesh && child.material?.color) {
+            child.material.color.set(baseColor);
+            child.userData.originalColor = child.material.color.clone();
+        }
+    });
+    scene.add(map);
+}, undefined, (error) => console.error(error));
+
 // Responsive resizing
 window.addEventListener('resize', () => {
     sizes.width = window.innerWidth;
@@ -131,20 +128,59 @@ window.addEventListener('resize', () => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
-// Pointer utilities
-function updatePointerFromEvent(event) {
-    const rect = canvas.getBoundingClientRect();
-    pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+// Animation loop
+// const clock = new THREE.Clock();
+function tick() {
+    controls.update();
+    renderer.render(scene, camera);
+    raycastRender();
+
+    if (selectedState && !labelFadingOut) {
+        updateLabelPosition(selectedState);
+    }
+
+    requestAnimationFrame(tick);
+}
+
+tick();
+
+// Event listeners
+canvas.addEventListener('pointermove', onPointerMove);
+canvas.addEventListener('pointerdown', (event) => {
+    pointerDownPos.set(event.clientX, event.clientY);
+});
+canvas.addEventListener('pointerup', (event) => {
+    const dx = event.clientX - pointerDownPos.x;
+    const dy = event.clientY - pointerDownPos.y;
+    if (dx * dx + dy * dy < MAX_CLICK_DELTA * MAX_CLICK_DELTA) {
+        handleTapOnState(event);
+    }
+});
+
+function onPointerMove(event) {
+    if (!isMobile) {
+        updatePointerFromEvent(event);
+        raycaster.setFromCamera(pointer, camera);
+        const intersects = raycaster.intersectObjects(selectableStates, true);
+        calculateStateHover(intersects);
+    }
+}
+
+function raycastRender() {
+    raycaster.setFromCamera(pointer, camera);
+    const intersects = raycaster.intersectObjects(selectableStates, true);
+    calculateStateHover(intersects);
 }
 
 // Hover behavior
 function calculateStateHover(intersects) {
+    //No hover on mobile, and no hovers if state already picked
     if (isMobile || selectedState) return;
 
     if (intersects.length > 0) {
         const state = intersects[0].object;
         if (hoveredState && hoveredState !== state) {
+            //Switching States, reset previous hover
             resetStateAppearance(hoveredState);
         }
         if (!normalMaterials.has(state.id)) {
@@ -154,7 +190,8 @@ function calculateStateHover(intersects) {
         hoveredState.material = hoveredState.material.clone();
         hoveredState.material.color.set(hoverColor);
         hoveredState.position.y = 0.2;
-    } else {
+    } 
+    else {
         if (hoveredState) {
             resetStateAppearance(hoveredState);
             hoveredState = null;
@@ -164,6 +201,7 @@ function calculateStateHover(intersects) {
 
 function resetStateAppearance(state) {
     const originalMat = normalMaterials.get(state.id);
+    
     if (originalMat) {
         state.material = originalMat.clone();
     }
@@ -188,17 +226,20 @@ function handleTapOnState(event) {
 
     const clickedState = intersects.find(obj => obj.object.isMesh)?.object || null;
 
+    //For example, clicked outside map
     if (!clickedState) {
         deselectState();
         return;
     }
 
+    //Clicked on state already selected
     if (selectedState && clickedState === selectedState) {
         deselectState();
         flyToDefaultView();
         return;
     }
 
+    //Switching states, fix old state
     if (selectedState) {
         labelFadingOut = true;
         resetStateAppearance(selectedState);
@@ -305,17 +346,17 @@ function updateLabelPosition(stateMesh) {
     // label.style.transform = `translate(-50%, -100%) translate(${x}px, ${y + offsetY}px)`;
 }
 
-function hideLabel() {
-    labelFadingOut = true;
-    gsap.to(label.style, {
-        duration: 0.4,
-        opacity: 0,
-        ease: 'power2.in',
-        onComplete: () => {
-            label.style.display = 'none';
-        }
-    });
-}
+// function hideLabel() {
+//     labelFadingOut = true;
+//     gsap.to(label.style, {
+//         duration: 0.4,
+//         opacity: 0,
+//         ease: 'power2.in',
+//         onComplete: () => {
+//             label.style.display = 'none';
+//         }
+//     });
+// }
 
 
 function flyToDefaultView() {
@@ -417,61 +458,15 @@ function flyToState(stateMesh) {
     });
 }
 
-
-function getZoomHeight() {
-    const minZoom = 2;
-    const maxZoom = 5;
-    const minWidth = 400;
-    const maxWidth = 1400;
-    const width = Math.min(Math.max(sizes.width, minWidth), maxWidth);
-    const t = (maxWidth - width) / (maxWidth - minWidth);
-    return minZoom + t * (maxZoom - minZoom);
-}
-
-// Animation loop
-// const clock = new THREE.Clock();
-function tick() {
-    controls.update();
-    renderer.render(scene, camera);
-    raycastRender();
-
-    if (selectedState && !labelFadingOut) {
-        updateLabelPosition(selectedState);
-    }
-
-    requestAnimationFrame(tick);
-
-}
-
-function raycastRender() {
-    raycaster.setFromCamera(pointer, camera);
-    const intersects = raycaster.intersectObjects(selectableStates, true);
-    calculateStateHover(intersects);
-}
-
-tick();
-
-// Event listeners
-canvas.addEventListener('pointermove', onPointerMove);
-canvas.addEventListener('pointerdown', (event) => {
-    pointerDownPos.set(event.clientX, event.clientY);
-});
-canvas.addEventListener('pointerup', (event) => {
-    const dx = event.clientX - pointerDownPos.x;
-    const dy = event.clientY - pointerDownPos.y;
-    if (dx * dx + dy * dy < MAX_CLICK_DELTA * MAX_CLICK_DELTA) {
-        handleTapOnState(event);
-    }
-});
-
-function onPointerMove(event) {
-    if (!isMobile) {
-        updatePointerFromEvent(event);
-        raycaster.setFromCamera(pointer, camera);
-        const intersects = raycaster.intersectObjects(selectableStates, true);
-        calculateStateHover(intersects);
-    }
-}
+// function getZoomHeight() {
+//     const minZoom = 2;
+//     const maxZoom = 5;
+//     const minWidth = 400;
+//     const maxWidth = 1400;
+//     const width = Math.min(Math.max(sizes.width, minWidth), maxWidth);
+//     const t = (maxWidth - width) / (maxWidth - minWidth);
+//     return minZoom + t * (maxZoom - minZoom);
+// }
 
 // function showUniversityList(stateName, infoArray) {
 //     const listContainer = document.getElementById('university-list'); // your container element
@@ -518,15 +513,19 @@ function showUniversityList(universities) {
     panel.classList.add('visible');
 }
 
-
 function hideUniversityList() {
-    console.log('hide universitylist')
+    // console.log('hide universitylist')
     const panel = document.getElementById('university-list');
     panel.classList.remove('visible');
 }
 
 // Event listener for close button
-document.querySelector('.close-info-button').addEventListener('click', hideUniversityList);
+// document.querySelector('.close-info-button').addEventListener('click', hideUniversityList);
 
-
+// Pointer utilities
+function updatePointerFromEvent(event) {
+    const rect = canvas.getBoundingClientRect();
+    pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+}
 
