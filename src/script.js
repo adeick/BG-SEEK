@@ -16,6 +16,8 @@ import gsap from 'gsap';
 
 // Detect mobile platform
 const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+let colorMode = 'default'; // 'default' | 'region' | 'seek'
+
 
 let universityData = [];
 
@@ -50,8 +52,7 @@ scene.background = new THREE.Color(0xB5D9F9);
 const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x000000, 25);
 scene.add(hemisphereLight);
 
-// Materials
-const normalMaterials = new Map();
+// Default Materials
 const baseColor = 0x1A4D77;
 const hoverColor = 0x335b83;
 const selectedColor = 0x335b83;
@@ -95,6 +96,181 @@ const renderer = new THREE.WebGLRenderer({ canvas });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+const colorToggles = {
+    region: false,
+    seek: false
+};
+
+function getColorMode() {
+    if (colorToggles.region) return 'region';
+    if (colorToggles.seek) return 'seek';
+    return 'default';
+}
+//Regional Colors
+const REGION_STYLES = {
+    west: {
+        base: new THREE.Color(0x1A4D77),
+        hover: new THREE.Color(0x2F6B9A),      // lighter
+        selected: new THREE.Color(0x123554)   // darker
+    },
+    north: {
+        base: new THREE.Color(0x1A5E5A),
+        hover: new THREE.Color(0x2F7F7A),
+        selected: new THREE.Color(0x124541)
+    },
+    south: {
+        base: new THREE.Color(0x3A4D7A),
+        hover: new THREE.Color(0x5568A3),
+        selected: new THREE.Color(0x2A3557)
+    },
+    east: {
+        base: new THREE.Color(0x2A3F66),
+        hover: new THREE.Color(0x3F5A8C),
+        selected: new THREE.Color(0x1D2C47)
+    }
+};
+
+//SEEK Colors
+const SEEK_STYLES = {
+    columbus: {
+        base: new THREE.Color(0x9C5102),
+        hover: new THREE.Color(0xA87A0F),
+        selected: new THREE.Color('#80480d')
+    },
+    sanAntonio: {
+        base: new THREE.Color('#10140F'),
+        hover: new THREE.Color(0x252320),
+        selected: new THREE.Color('#221B12') 
+    },
+    split: {
+        base: new THREE.Color(0x1f77b4),
+        hover: new THREE.Color(0x4fa3d1),
+        selected: new THREE.Color(0x82cfff)
+    }
+};
+
+const STATE_TO_REGION = {
+    // WEST
+    Washington: 'west',
+    Oregon: 'west',
+    California: 'west',
+    Nevada: 'west',
+    Idaho: 'west',
+    Montana: 'west',
+    Wyoming: 'west',
+    Utah: 'west',
+    Colorado: 'west',
+    Arizona: 'west',
+    New_Mexico: 'west',
+    // Alaska: 'west',
+    // Hawaii: 'west',
+
+    // SOUTH
+    Texas: 'south',
+    Oklahoma: 'south',
+    Arkansas: 'south',
+    Louisiana: 'south',
+    Mississippi: 'south',
+    Alabama: 'south',
+    Georgia: 'south',
+    Florida: 'south',
+    South_Carolina: 'south',
+    North_Carolina: 'east',
+    Tennessee: 'south',
+    Kentucky: 'south',
+    Virginia: 'east',
+    West_Virginia: 'east',
+
+    // NORTH
+    North_Dakota: 'north',
+    South_Dakota: 'north',
+    Nebraska: 'west',
+    Kansas: 'west',
+    Minnesota: 'north',
+    Iowa: 'north',
+    Missouri: 'north',
+    Wisconsin: 'north',
+    Illinois: 'north',
+    Michigan: 'north',
+    Indiana: 'north',
+    Ohio: 'north',
+
+    // EAST
+    Maine: 'east',
+    New_Hampshire: 'east',
+    Vermont: 'east',
+    Massachusetts: 'east',
+    Rhode_Island: 'east',
+    Connecticut: 'east',
+    New_York: 'east',
+    New_Jersey: 'east',
+    Pennsylvania: 'east',
+    Delaware: 'east',
+    Maryland: 'east',
+    // District_of_Columbia: 'east'
+};
+
+const STATE_TO_SEEK = {
+    // WEST
+    Washington: 'sanAntonio',
+    Oregon: 'sanAntonio',
+    California: 'sanAntonio',
+    Nevada: 'sanAntonio',
+    Idaho: 'sanAntonio',
+    Montana: 'sanAntonio',
+    Wyoming: 'sanAntonio',
+    Utah: 'sanAntonio',
+    Colorado: 'sanAntonio',
+    Arizona: 'sanAntonio',
+    New_Mexico: 'sanAntonio',
+    // Alaska: 'sanAntonio',
+    // Hawaii: 'sanAntonio',
+
+    // SOUTH
+    Texas: 'sanAntonio',
+    Oklahoma: 'sanAntonio',
+    Arkansas: 'sanAntonio',
+    Louisiana: 'sanAntonio',
+    Mississippi: 'sanAntonio',
+    Alabama: 'sanAntonio',
+    Georgia: 'columbus',
+    Florida: 'columbus',
+    South_Carolina: 'columbus',
+    North_Carolina: 'columbus',
+    Tennessee: 'columbus',
+    Kentucky: 'columbus',
+    Virginia: 'columbus',
+    West_Virginia: 'columbus',
+
+    // NORTH
+    North_Dakota: 'sanAntonio',
+    South_Dakota: 'sanAntonio',
+    Nebraska: 'sanAntonio',
+    Kansas: 'sanAntonio',
+    Minnesota: 'columbus',
+    Iowa: 'columbus',
+    Missouri: 'columbus',
+    Wisconsin: 'columbus',
+    Illinois: 'columbus',
+    Michigan: 'columbus',
+    Indiana: 'columbus',
+    Ohio: 'columbus',
+
+    // EAST
+    Maine: 'columbus',
+    New_Hampshire: 'columbus',
+    Vermont: 'columbus',
+    Massachusetts: 'columbus',
+    Rhode_Island: 'columbus',
+    Connecticut: 'columbus',
+    New_York: 'columbus',
+    New_Jersey: 'columbus',
+    Pennsylvania: 'columbus',
+    Delaware: 'columbus',
+    Maryland: 'columbus',
+    // District_of_Columbia: 'east'
+};
+
 // Track current interaction state
 let hoveredState = null;
 let selectedState = null;
@@ -108,11 +284,25 @@ loader.load(USA_Map_URL, (gltf) => {
     const map = gltf.scene;
     map.traverse((child) => {
         if (child.isMesh) {
+            child.material = child.material.clone();
             selectableStates.push(child);
-        }
-        if (child.isMesh && child.material?.color) {
-            child.material.color.set(baseColor);
-            child.userData.originalColor = child.material.color.clone();
+
+            const region = STATE_TO_REGION[child.name];
+            const seek = STATE_TO_SEEK[child.name];
+
+            child.userData.region = region;
+            child.userData.seek = seek;
+            child.userData.colors = {
+                base: new THREE.Color(baseColor),
+                hover: new THREE.Color(hoverColor),
+                selected: new THREE.Color(selectedColor)
+            };
+
+            child.material.color.copy(child.userData.colors.base);
+
+            // child.material.color.set(baseColor);
+            // child.userData.baseColor = new THREE.Color(baseColor);
+            // // child.userData.originalColor = child.material.color.clone(); //delete
         }
     });
     scene.add(map);
@@ -126,6 +316,9 @@ window.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
     renderer.setSize(sizes.width, sizes.height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+     if (window.innerWidth > 768) {
+        setMobileMenu(false);    }
 });
 
 // Animation loop
@@ -183,13 +376,18 @@ function calculateStateHover(intersects) {
             //Switching States, reset previous hover
             resetStateAppearance(hoveredState);
         }
-        if (!normalMaterials.has(state.id)) {
-            normalMaterials.set(state.id, state.material.clone());
+        if (hoveredState && hoveredState !== state) {
+            setStateColor(hoveredState, 'base');
+            hoveredState.position.y = 0;
         }
-        hoveredState = state;
-        hoveredState.material = hoveredState.material.clone();
-        hoveredState.material.color.set(hoverColor);
-        hoveredState.position.y = 0.2;
+
+        if(!hoveredState || hoveredState !== state){
+            hoveredState = state;
+            setStateColor(hoveredState, 'hover');
+            hoveredState.position.y = 0.2;
+        }
+
+       
     } 
     else {
         if (hoveredState) {
@@ -200,11 +398,7 @@ function calculateStateHover(intersects) {
 }
 
 function resetStateAppearance(state) {
-    const originalMat = normalMaterials.get(state.id);
-    
-    if (originalMat) {
-        state.material = originalMat.clone();
-    }
+    setStateColor(state, 'base');
     state.position.y = 0;
 }
 
@@ -247,12 +441,9 @@ function handleTapOnState(event) {
 
     selectedState = clickedState;
 
-    if (!normalMaterials.has(selectedState.id)) {
-        normalMaterials.set(selectedState.id, selectedState.material.clone());
-    }
+    setStateColor(selectedState, 'selected');
+    applyUniversityPanelColor(selectedState);
 
-    selectedState.material = selectedState.material.clone();
-    selectedState.material.color.set(selectedColor);
     selectedState.position.y = 0.2;
 
     flyToState(selectedState);
@@ -292,6 +483,8 @@ function showLabelForState(stateMesh) {
     // Set label text
     labelFadingOut = false;
     setLabelTextForState(stateMesh)
+
+    applyLabelColor(stateMesh);
 
     // Update position immediately before fade-in
     updateLabelPosition(stateMesh);
@@ -340,24 +533,41 @@ function updateLabelPosition(stateMesh) {
 
     label.style.left = `${x - label.offsetWidth / 2}px`;
     label.style.top = `${y}px`;
-
-    // Optional: Offset slightly upward in screen space
-    // const offsetY = -30; // pixels upward
-    // label.style.transform = `translate(-50%, -100%) translate(${x}px, ${y + offsetY}px)`;
 }
 
-// function hideLabel() {
-//     labelFadingOut = true;
-//     gsap.to(label.style, {
-//         duration: 0.4,
-//         opacity: 0,
-//         ease: 'power2.in',
-//         onComplete: () => {
-//             label.style.display = 'none';
-//         }
-//     });
-// }
+function applyLabelColor(state) {
+    const color = getStateUIColor(state).clone().convertLinearToSRGB();
 
+    label.style.background = `rgb(
+        ${Math.round(color.r * 255)},
+        ${Math.round(color.g * 255)},
+        ${Math.round(color.b * 255)}
+    )`;
+//gradient
+    label.style.color = 'white';
+}
+
+function applyUniversityPanelColor(state) {
+    const panel = document.getElementById('university-list');
+    const color = getStateUIColor(state).clone().convertLinearToSRGB();;
+
+    panel.style.background = `rgb(
+        ${Math.round(color.r * 255)},
+        ${Math.round(color.g * 255)},
+        ${Math.round(color.b * 255)}
+    )`;
+}
+
+function getStateUIColor(state) {
+    if (colorMode === 'region') {
+        return REGION_STYLES[state.userData.region].base;
+    } 
+    else if (colorMode === 'seek') {
+        return SEEK_STYLES[state.userData.seek].base;
+    } else {
+        return new THREE.Color(0x0b3b61);
+    } 
+}
 
 function flyToDefaultView() {
     gsap.to(camera.position, {
@@ -458,33 +668,6 @@ function flyToState(stateMesh) {
     });
 }
 
-// function getZoomHeight() {
-//     const minZoom = 2;
-//     const maxZoom = 5;
-//     const minWidth = 400;
-//     const maxWidth = 1400;
-//     const width = Math.min(Math.max(sizes.width, minWidth), maxWidth);
-//     const t = (maxWidth - width) / (maxWidth - minWidth);
-//     return minZoom + t * (maxZoom - minZoom);
-// }
-
-// function showUniversityList(stateName, infoArray) {
-//     const listContainer = document.getElementById('university-list'); // your container element
-//     listContainer.innerHTML = ''; // clear previous items
-
-//     infoArray.forEach(university => {
-//         // Create a div with the 'university-item' class
-//         const item = document.createElement('div');
-//         item.className = 'university-item';
-//         item.textContent = university; // or use university.name if objects
-
-//         listContainer.appendChild(item);
-//     });
-
-//     // Make sure the container is visible (you might already have this logic)
-//     listContainer.classList.add('visible');
-// }
-
 
 function showUniversityList(universities) {
     const panel = document.getElementById('university-list');
@@ -514,13 +697,117 @@ function showUniversityList(universities) {
 }
 
 function hideUniversityList() {
-    // console.log('hide universitylist')
     const panel = document.getElementById('university-list');
     panel.classList.remove('visible');
 }
 
-// Event listener for close button
-// document.querySelector('.close-info-button').addEventListener('click', hideUniversityList);
+//Color Functions
+function setStateColor(state, type) {
+    if (!state) return;
+
+    if (colorMode === 'region') {
+        if (type === 'base') {
+            tweenMaterial(state.material, REGION_STYLES[state.userData.region].base);
+        } else if (type === 'hover') {
+            tweenMaterial(state.material, REGION_STYLES[state.userData.region].hover);
+        } else if (type === 'selected') {
+            tweenMaterial(state.material, REGION_STYLES[state.userData.region].selected);
+        }
+    }
+    else if (colorMode === 'seek') {
+        if (type === 'base') {
+            tweenMaterial(state.material, SEEK_STYLES[state.userData.seek].base);
+        } else if (type === 'hover') {
+            tweenMaterial(state.material, SEEK_STYLES[state.userData.seek].hover);
+        } else if (type === 'selected') {
+            tweenMaterial(state.material, SEEK_STYLES[state.userData.seek].selected);
+        }
+    }
+    else {
+        // default
+        if (type === 'base') {
+            tweenMaterial(state.material, state.userData.colors.base);
+        } else if (type === 'hover') {
+            tweenMaterial(state.material, state.userData.colors.hover);
+        } else if (type === 'selected') {
+            tweenMaterial(state.material, state.userData.colors.selected);
+        }
+    }
+}
+
+function tweenMaterial(material, targetColor) {
+
+    gsap.to(material.color, {
+        r: targetColor.r,
+        g: targetColor.g,
+        b: targetColor.b,
+        duration: 0.3
+    });
+}
+
+const modeButtons = document.querySelectorAll('.mode-btn');
+
+modeButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const mode = button.dataset.mode;
+
+        // toggle clicked mode
+        colorToggles[mode] = !colorToggles[mode];
+
+        // enforce mutual exclusivity
+        if (colorToggles[mode]) {
+            Object.keys(colorToggles).forEach(key => {
+                if (key !== mode) colorToggles[key] = false;
+            });
+        }
+
+        updateColorModeUI();
+        applyColorMode();
+
+        setMobileMenu(false);
+    });
+});
+
+function updateColorModeUI() {
+    modeButtons.forEach(button => {
+        const mode = button.dataset.mode;
+        button.classList.toggle('active', colorToggles[mode]);
+    });
+}
+
+function applyColorMode() {
+    colorMode = getColorMode();
+
+    selectableStates.forEach(state => {
+        setStateColor(state, 'base');
+        state.position.y = 0;
+    });
+
+    if (selectedState) {
+        setStateColor(selectedState, 'selected');
+        selectedState.position.y = 0.2;
+    } else if (hoveredState) {
+        setStateColor(hoveredState, 'hover');
+        hoveredState.position.y = 0.2;
+    }
+}
+
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+
+if (isMobile) {
+    document.getElementById('controls').style.display = 'none';
+}
+
+hamburger.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.contains('active');
+    setMobileMenu(!isOpen);
+});
+
+function setMobileMenu(open) {
+    mobileMenu.classList.toggle('active', open);
+    hamburger.classList.toggle('open', open);
+}
 
 // Pointer utilities
 function updatePointerFromEvent(event) {
